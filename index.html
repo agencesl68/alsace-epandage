@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#f7f9f3">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Alsace Epandage — Bon d'épandage</title>
+  <style>
+    :root {
+      --bg: #f7f9f3;
+      --surface: #ffffff;
+      --surface2: #f2f5ec;
+      --border: rgba(101,163,13,.22);
+      --border-soft: rgba(20,32,22,.10);
+      --lime: #bef264;
+      --lime-d: #4d7c0f;
+      --lime-dd: #84cc16;
+      --text: #16201a;
+      --muted: #6b756c;
+      --ok: #15803d;
+      --err: #dc2626;
+      --warn: #b45309;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(120% 60% at 50% -10%, rgba(132,204,22,.10), transparent 55%),
+        var(--bg);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    .display { font-family: 'Space Grotesk', sans-serif; }
+
+    /* ===== Header ===== */
+    header { padding: 30px 22px 22px; text-align: center; position: relative; }
+    header .badge-top {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--lime-d); background: rgba(163,230,53,.08);
+      border: 1px solid var(--border); padding: 6px 13px; border-radius: 100px; margin-bottom: 14px;
+    }
+    header .badge-top .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--lime-d); box-shadow: 0 0 10px var(--lime-d); }
+    header h1 {
+      margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -.5px; line-height: 1.05;
+      background: linear-gradient(180deg, #1f5d24 0%, #4d7c0f 130%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    header .sub { margin: 8px 0 0; font-size: 13px; color: var(--muted); font-weight: 500; }
+    .pending {
+      display: none; margin: 16px auto 0; max-width: 460px;
+      background: rgba(251,191,36,.10); border: 1px solid rgba(251,191,36,.35);
+      color: var(--warn); font-size: 12.5px; font-weight: 600; padding: 9px 13px; border-radius: 12px;
+    }
+    .pending.show { display: block; }
+
+    .wrap { padding: 6px 14px 20px; max-width: 520px; margin: 0 auto; }
+    form { padding: 6px 0 10px; }
+
+    /* ===== Sections / cards ===== */
+    .section { margin-bottom: 24px; }
+    .section > .title {
+      display: flex; align-items: center; gap: 9px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.2px;
+      color: var(--text); margin: 0 4px 12px;
+    }
+    .section > .title i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime-d); box-shadow: 0 0 10px rgba(163,230,53,.7); }
+    .card {
+      background: var(--surface); border: 1px solid var(--border-soft); border-radius: 20px;
+      padding: 16px; box-shadow: 0 1px 3px rgba(20,32,22,.06);
+    }
+
+    .field { margin-bottom: 14px; }
+    .field:last-child { margin-bottom: 0; }
+    .row { display: flex; gap: 10px; }
+    .row .field { flex: 1; min-width: 0; }
+    label { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 7px; color: var(--muted); }
+    label .req { color: var(--lime-d); }
+    input, select, textarea {
+      width: 100%; min-width: 0; max-width: 100%; padding: 14px; font-size: 16px;
+      border: 1px solid var(--border-soft); border-radius: 14px;
+      background: var(--surface2); color: var(--text); outline: none;
+      -webkit-appearance: none; appearance: none; font-family: inherit;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input::placeholder, textarea::placeholder { color: #5c655e; }
+    input[type="date"] { -webkit-appearance: none; min-height: 51px; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234d7c0f' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+    input:focus, select:focus, textarea:focus { border-color: var(--lime-d); box-shadow: 0 0 0 3px rgba(163,230,53,.16); }
+    textarea { resize: none; min-height: 78px; line-height: 1.5; }
+    .hint { font-size: 11.5px; color: var(--muted); margin: 8px 4px 0; }
+
+    /* ===== Dépotage ===== */
+    .chrono-btn {
+      width: 100%; padding: 17px; border: none; border-radius: 15px; cursor: pointer;
+      font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; color: #0a0e0c;
+      background: linear-gradient(135deg, var(--lime) 0%, var(--lime-dd) 100%);
+      box-shadow: 0 4px 14px rgba(132,204,22,.30);
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+    }
+    .chrono-btn.running {
+      color: #fff; background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%);
+      box-shadow: 0 6px 22px rgba(225,29,72,.30); animation: pulse 1.6s ease-in-out infinite;
+    }
+    .chrono-btn:disabled { opacity: .9; background: var(--surface2); color: var(--ok); box-shadow: none; cursor: default; animation: none; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 6px 22px rgba(225,29,72,.30); } 50% { box-shadow: 0 6px 30px rgba(225,29,72,.55); } }
+    .times { display: flex; justify-content: space-between; margin-top: 16px; }
+    .times .t { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); }
+    .times .v { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 600; color: var(--text); margin-top: 3px; }
+    .duree { text-align: center; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--lime-d); }
+    .chrono-live { text-align: center; margin-bottom: 14px; }
+    .chrono-live #chronoTime { font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 600; color: var(--text); letter-spacing: .5px; line-height: 1; }
+    .chrono-live #chronoState { display: block; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-top: 6px; }
+    .chrono-live.running #chronoTime { color: var(--lime-d); }
+    .chrono-live.paused #chronoTime, .chrono-live.paused #chronoState { color: var(--warn); }
+    .pause-btn {
+      width: 100%; margin-top: 10px; padding: 14px; border: 1px solid var(--border); border-radius: 14px;
+      background: var(--surface2); color: var(--lime-d);
+      font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .pause-btn.paused { background: rgba(180,83,9,.08); border-color: rgba(180,83,9,.30); color: var(--warn); }
+    .pause-btn[hidden] { display: none; }
+
+    /* ===== Produits ===== */
+    .product { background: var(--surface); border: 1px solid var(--border-soft); border-radius: 18px; padding: 14px; margin-bottom: 12px; position: relative; }
+    .product .pnum {
+      display: inline-flex; align-items: center;
+      font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px;
+      color: var(--lime-d); background: rgba(163,230,53,.10); border: 1px solid var(--border);
+      padding: 5px 11px; border-radius: 100px; margin-bottom: 12px;
+    }
+    .product .nbha {
+      background: linear-gradient(135deg, rgba(163,230,53,.14), rgba(132,204,22,.06));
+      border: 1px solid var(--border); border-radius: 12px; padding: 11px 13px;
+      font-size: 13px; font-weight: 600; color: var(--lime-d); margin-top: 12px;
+    }
+    .product .nbha strong { color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+    .product .remove { position: absolute; top: 13px; right: 13px; background: none; border: none; color: var(--err); font-size: 12.5px; font-weight: 600; cursor: pointer; padding: 4px; }
+    .add-btn {
+      width: 100%; padding: 15px; border: 1.5px dashed var(--border); border-radius: 15px;
+      background: rgba(163,230,53,.04); color: var(--lime-d);
+      font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .add-btn:active { background: rgba(163,230,53,.10); }
+
+    /* ===== Photos ===== */
+    .photo-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px;
+      border: 1.5px dashed var(--border); border-radius: 15px; background: rgba(163,230,53,.04);
+      color: var(--lime-d); font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .photo-btn svg { width: 21px; height: 21px; }
+    input[type="file"] { display: none; }
+    .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 12px; }
+    .thumbs .thumb { position: relative; }
+    .thumbs .thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; display: block; border: 1px solid var(--border-soft); }
+    .thumbs .thumb button {
+      position: absolute; top: 5px; right: 5px; background: rgba(10,14,12,.8); color: #fff; border: 1px solid rgba(255,255,255,.2);
+      width: 26px; height: 26px; border-radius: 50%; font-size: 15px; cursor: pointer; line-height: 1;
+    }
+
+    /* ===== Signatures ===== */
+    .sigwrap { background: var(--surface); border: 1px solid var(--border-soft); border-radius: 18px; padding: 14px; margin-bottom: 12px; }
+    .sighead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .sighead span { font-size: 13px; font-weight: 600; color: var(--text); }
+    .sighead span .req { color: var(--lime-d); }
+    .sighead button { background: rgba(20,32,22,.04); border: 1px solid var(--border-soft); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; padding: 6px 12px; border-radius: 9px; }
+    .sigpad { width: 100%; height: 165px; border-radius: 14px; background: #fbfcf8; border: 1px dashed var(--border); touch-action: none; display: block; }
+    .absent {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+      background: var(--surface); border: 1px solid var(--border-soft); border-radius: 15px; margin-bottom: 12px; cursor: pointer;
+    }
+    .absent input { width: 22px; height: 22px; flex: 0 0 auto; accent-color: var(--lime-dd); }
+    .absent label { margin: 0; font-weight: 600; color: var(--text); font-size: 14px; }
+    .hidden { display: none !important; }
+
+    /* ===== Submit (barre collée) ===== */
+    .submitbar {
+      position: sticky; bottom: 0; z-index: 20;
+      margin: 8px -14px 0; padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, var(--bg) 55%, rgba(247,249,243,.85) 80%, transparent);
+    }
+    button.submit {
+      width: 100%; padding: 17px; font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: #16201a;
+      background: linear-gradient(135deg, var(--lime) 0%, var(--lime-dd) 100%); border: none; border-radius: 16px; cursor: pointer;
+      box-shadow: 0 5px 18px rgba(132,204,22,.32);
+    }
+    button.submit:active { transform: scale(.985); }
+    button.submit:disabled { opacity: .6; }
+
+    .toast {
+      position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(140px);
+      background: var(--surface); color: var(--text); border: 1px solid var(--border-soft);
+      padding: 14px 22px; border-radius: 14px; font-size: 14.5px; font-weight: 600;
+      box-shadow: 0 8px 28px rgba(20,32,22,.16); transition: transform .3s; z-index: 50; max-width: 90%;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.ok { border-color: rgba(74,222,128,.4); color: var(--ok); }
+    .toast.err { border-color: rgba(248,113,113,.4); color: var(--err); }
+    .toast.warn { border-color: rgba(251,191,36,.4); color: var(--warn); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge-top"><span class="dot"></span>Terrain · Hors-ligne OK</div>
+    <h1 class="display">ALSACE EPANDAGE</h1>
+    <div class="sub">Bon d'épandage</div>
+    <div class="pending" id="pending"></div>
+  </header>
+
+  <div class="wrap">
+    <form id="form">
+
+      <!-- ===== Infos générales ===== -->
+      <div class="section">
+        <div class="title"><i></i>Informations</div>
+        <div class="card">
+          <div class="row">
+            <div class="field">
+              <label>Date <span class="req">*</span></label>
+              <input type="date" name="date" required>
+            </div>
+            <div class="field">
+              <label>Nb de parcelles</label>
+              <input type="number" name="nombre_parcelles" inputmode="numeric" placeholder="ex: 1">
+            </div>
+          </div>
+          <div class="field">
+            <label>Distributeur <span class="req">*</span></label>
+            <select name="distributeur" id="distributeur" required>
+              <option value="" disabled selected>— Choisir —</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Épandage réalisé chez <span class="req">*</span></label>
+            <input type="text" name="client" placeholder="Nom de l'agriculteur" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Dépotage ===== -->
+      <div class="section">
+        <div class="title"><i></i>Dépotage</div>
+        <div class="card">
+          <div class="chrono-live" id="chronoLive">
+            <span id="chronoTime">00:00</span>
+            <span id="chronoState">Prêt à démarrer</span>
+          </div>
+          <button type="button" class="chrono-btn" id="chronoBtn">▶ Démarrer le dépotage</button>
+          <button type="button" class="pause-btn" id="pauseBtn" hidden>⏸ Pause</button>
+          <div class="times">
+            <div><div class="t">Début</div><div class="v" id="depotDebutTxt">—</div></div>
+            <div style="text-align:right"><div class="t">Fin</div><div class="v" id="depotFinTxt">—</div></div>
+          </div>
+          <div class="duree" id="depotDureeTxt"></div>
+        </div>
+      </div>
+
+      <!-- ===== Produits ===== -->
+      <div class="section">
+        <div class="title"><i></i>Produits épandus</div>
+        <div id="products"></div>
+        <button type="button" class="add-btn" id="addProduct">＋ Ajouter un produit</button>
+        <datalist id="produits"></datalist>
+      </div>
+
+      <!-- ===== Observations ===== -->
+      <div class="section">
+        <div class="title"><i></i>Observations</div>
+        <div class="card">
+          <div class="field">
+            <textarea name="observations" placeholder="Remarque éventuelle (incident, accès, météo…)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Photos incident ===== -->
+      <div class="section">
+        <div class="title"><i></i>Photos <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0;margin-left:4px">· option si incident</span></div>
+        <label class="photo-btn" for="fileIncident">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span>Ajouter une photo</span>
+        </label>
+        <input type="file" id="fileIncident" accept="image/*" capture="environment">
+        <div class="thumbs" id="incidentList"></div>
+      </div>
+
+      <!-- ===== Signatures ===== -->
+      <div class="section">
+        <div class="title"><i></i>Signatures</div>
+        <p class="hint" style="margin:0 4px 12px">L'agriculteur déclare être satisfait de l'épandage.</p>
+
+        <div class="sigwrap">
+          <div class="sighead"><span>Signature chauffeur <span class="req">*</span></span><button type="button" data-clear="chauffeur">Effacer</button></div>
+          <canvas class="sigpad" id="sigChauffeur"></canvas>
+        </div>
+
+        <div class="absent">
+          <input type="checkbox" id="clientAbsent">
+          <label for="clientAbsent">Client absent (pas de signature)</label>
+        </div>
+
+        <div class="sigwrap" id="sigClientWrap">
+          <div class="sighead"><span>Signature client</span><button type="button" data-clear="client">Effacer</button></div>
+          <canvas class="sigpad" id="sigClient"></canvas>
+        </div>
+      </div>
+
+      <div class="submitbar">
+        <button type="submit" class="submit" id="submitBtn">Enregistrer le bon</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /* ===== CONFIG (à éditer) ===== */
+    const WEBHOOK_URL = "https://hook.eu1.make.com/REMPLACE-MOI"; // ← webhook Make
+    const APP_TOKEN   = "AE-CHANGE-MOI-2026"; // sécurité : doit matcher le filtre Make
+    const DISTRIBUTEURS = ["MEAC", "LHOIST", "RHÔNE ALPES AMENDEMENT", "GUSTAVE MULLER",
+                           "COMPTOIR AGRICOLE", "WALCH", "ARMBRUSTER", "HAURI", "FEUERSTEIN", "CHAYS"];
+    const PRODUITS = ["Calcifertil 54", "Rendu Racine"]; // suggestions (saisie libre possible)
+    /* ============================= */
+
+    const QUEUE_KEY = "ae_bons_queue";
+    const form = document.querySelector('#form');
+    const submitBtn = document.querySelector('#submitBtn');
+    const toast = document.querySelector('#toast');
+    const pending = document.querySelector('#pending');
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+
+    // Listes
+    const selDist = document.querySelector('#distributeur');
+    DISTRIBUTEURS.forEach(d => { const o = document.createElement('option'); o.value = d; o.textContent = d; selDist.appendChild(o); });
+    const dlProd = document.querySelector('#produits');
+    PRODUITS.forEach(p => { const o = document.createElement('option'); o.value = p; dlProd.appendChild(o); });
+
+    form.date.value = new Date().toISOString().slice(0, 10);
+
+    function num(v) { const n = parseFloat(String(v || '').replace(',', '.')); return isNaN(n) ? 0 : n; }
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function hhmm(d) { return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+    function showToast(msg, type) {
+      toast.textContent = msg;
+      toast.className = 'toast show ' + (type || '');
+      setTimeout(() => { toast.className = 'toast ' + (type || ''); }, 3500);
+    }
+
+    /* ===== Dépotage (chrono avec pause) ===== */
+    const chronoBtn = document.querySelector('#chronoBtn');
+    const pauseBtn = document.querySelector('#pauseBtn');
+    const chronoLive = document.querySelector('#chronoLive');
+    const chronoTime = document.querySelector('#chronoTime');
+    const chronoState = document.querySelector('#chronoState');
+    let depotState = 'idle';                    // idle | running | paused | done
+    let depotDebut = null, depotFin = null;
+    let activeMs = 0, segStart = null;          // temps de dépotage actif (hors pauses)
+    let pauseMs = 0, pauseStart = null, pauseCount = 0;
+    let tick = null;
+
+    function netMs() { return activeMs + (segStart ? Date.now() - segStart : 0); }
+    function totalPauseMs() { return pauseMs + (pauseStart ? Date.now() - pauseStart : 0); }
+    function clock(ms) {
+      const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+      return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
+    }
+    function dureeStrMs(ms) {
+      const min = Math.max(0, Math.round(ms / 60000));
+      return min >= 60 ? `${Math.floor(min / 60)}h${pad(min % 60)}` : `${min} min`;
+    }
+    function startTick() { stopTick(); tick = setInterval(() => { chronoTime.textContent = clock(netMs()); }, 1000); }
+    function stopTick() { if (tick) { clearInterval(tick); tick = null; } }
+    function setDepotState(s) {
+      depotState = s;
+      chronoLive.classList.toggle('running', s === 'running');
+      chronoLive.classList.toggle('paused', s === 'paused');
+      if (s === 'idle') {
+        chronoBtn.textContent = '▶ Démarrer le dépotage'; chronoBtn.classList.remove('running'); chronoBtn.disabled = false;
+        pauseBtn.hidden = true; chronoState.textContent = 'Prêt à démarrer';
+      } else if (s === 'running') {
+        chronoBtn.textContent = '⏹ Terminer le dépotage'; chronoBtn.classList.add('running'); chronoBtn.disabled = false;
+        pauseBtn.hidden = false; pauseBtn.textContent = '⏸ Pause'; pauseBtn.classList.remove('paused');
+        chronoState.textContent = pauseCount ? `En cours · ${pauseCount} pause(s)` : 'En cours…';
+      } else if (s === 'paused') {
+        chronoBtn.textContent = '⏹ Terminer le dépotage'; chronoBtn.classList.add('running'); chronoBtn.disabled = false;
+        pauseBtn.hidden = false; pauseBtn.textContent = '▶ Reprendre'; pauseBtn.classList.add('paused');
+        chronoState.textContent = `En pause · ${pauseCount} pause(s)`;
+      } else if (s === 'done') {
+        chronoBtn.textContent = '✓ Dépotage terminé'; chronoBtn.classList.remove('running'); chronoBtn.disabled = true;
+        pauseBtn.hidden = true; chronoState.textContent = 'Terminé';
+      }
+    }
+    chronoBtn.addEventListener('click', () => {
+      if (depotState === 'idle') {
+        depotDebut = new Date(); segStart = Date.now();
+        document.querySelector('#depotDebutTxt').textContent = hhmm(depotDebut);
+        setDepotState('running'); startTick();
+      } else if (depotState === 'running' || depotState === 'paused') {
+        if (segStart) { activeMs += Date.now() - segStart; segStart = null; }
+        if (pauseStart) { pauseMs += Date.now() - pauseStart; pauseStart = null; }
+        depotFin = new Date(); stopTick();
+        chronoTime.textContent = clock(activeMs);
+        document.querySelector('#depotFinTxt').textContent = hhmm(depotFin);
+        let txt = 'Durée nette : ' + dureeStrMs(activeMs);
+        if (pauseCount) txt += ` · ${pauseCount} pause(s) (${dureeStrMs(pauseMs)})`;
+        document.querySelector('#depotDureeTxt').textContent = txt;
+        setDepotState('done');
+      }
+    });
+    pauseBtn.addEventListener('click', () => {
+      if (depotState === 'running') {
+        if (segStart) { activeMs += Date.now() - segStart; segStart = null; }
+        pauseStart = Date.now(); pauseCount++;
+        chronoTime.textContent = clock(activeMs);
+        setDepotState('paused'); stopTick();
+      } else if (depotState === 'paused') {
+        if (pauseStart) { pauseMs += Date.now() - pauseStart; pauseStart = null; }
+        segStart = Date.now(); setDepotState('running'); startTick();
+      }
+    });
+
+    /* ===== Produits (multi-lignes) ===== */
+    const products = document.querySelector('#products');
+    function renumber() {
+      [...products.children].forEach((card, i) => {
+        card.querySelector('.pnum').textContent = 'Produit ' + (i + 1);
+        card.querySelector('.remove').style.display = products.children.length > 1 ? '' : 'none';
+      });
+    }
+    function addProduct() {
+      const card = document.createElement('div');
+      card.className = 'product';
+      card.innerHTML = `
+        <div class="pnum">Produit</div>
+        <button type="button" class="remove">✕ Retirer</button>
+        <div class="field">
+          <label>Produit</label>
+          <input type="text" class="p-nom" list="produits" placeholder="ex: Calcifertil 54">
+        </div>
+        <div class="row">
+          <div class="field"><label>Tonnage (T)</label><input type="text" class="p-tonnage" inputmode="decimal" placeholder="ex: 30,460"></div>
+          <div class="field"><label>Dose/ha (T/ha)</label><input type="text" class="p-dose" inputmode="decimal" placeholder="ex: 1,2"></div>
+        </div>
+        <div class="nbha">Nombre d'ha : <strong>—</strong></div>`;
+      const tonnage = card.querySelector('.p-tonnage');
+      const dose = card.querySelector('.p-dose');
+      const nbha = card.querySelector('.nbha strong');
+      function calc() {
+        const t = num(tonnage.value), d = num(dose.value);
+        nbha.textContent = (t > 0 && d > 0) ? (t / d).toFixed(2).replace('.', ',') + ' ha' : '—';
+      }
+      tonnage.addEventListener('input', calc);
+      dose.addEventListener('input', calc);
+      card.querySelector('.remove').addEventListener('click', () => { card.remove(); renumber(); });
+      products.appendChild(card);
+      renumber();
+    }
+    document.querySelector('#addProduct').addEventListener('click', addProduct);
+    addProduct(); // au moins un produit
+
+    /* ===== Photos incident ===== */
+    const incidentPhotos = [];
+    const incidentList = document.querySelector('#incidentList');
+    function renderThumbs() {
+      incidentList.innerHTML = '';
+      incidentPhotos.forEach((src, i) => {
+        const t = document.createElement('div');
+        t.className = 'thumb';
+        t.innerHTML = `<img src="${src}"><button type="button">×</button>`;
+        t.querySelector('button').addEventListener('click', () => { incidentPhotos.splice(i, 1); renderThumbs(); });
+        incidentList.appendChild(t);
+      });
+    }
+    document.querySelector('#fileIncident').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxW = 1600, scale = Math.min(1, maxW / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width * scale; canvas.height = img.height * scale;
+          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+          incidentPhotos.push(canvas.toDataURL('image/jpeg', 0.85));
+          renderThumbs();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    });
+
+    /* ===== Signatures ===== */
+    function initSignature(canvas) {
+      const ctx = canvas.getContext('2d');
+      let drawing = false, hasInk = false, last = null;
+      function setup() {
+        const ratio = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * ratio;
+        canvas.height = rect.height * ratio;
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#15161a';
+      }
+      function pos(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+      canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); drawing = true; last = pos(e); });
+      canvas.addEventListener('pointermove', (e) => {
+        if (!drawing) return; e.preventDefault();
+        const p = pos(e);
+        ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+        last = p; hasInk = true;
+      });
+      const stop = () => { drawing = false; };
+      canvas.addEventListener('pointerup', stop);
+      canvas.addEventListener('pointerleave', stop);
+      canvas.addEventListener('pointercancel', stop);
+      setTimeout(setup, 0);
+      return {
+        isEmpty: () => !hasInk,
+        clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; },
+        dataUrl: () => canvas.toDataURL('image/png')
+      };
+    }
+    const sigChauffeur = initSignature(document.querySelector('#sigChauffeur'));
+    const sigClient = initSignature(document.querySelector('#sigClient'));
+    document.querySelectorAll('[data-clear]').forEach(btn => {
+      btn.addEventListener('click', () => (btn.dataset.clear === 'chauffeur' ? sigChauffeur : sigClient).clear());
+    });
+
+    const clientAbsent = document.querySelector('#clientAbsent');
+    const sigClientWrap = document.querySelector('#sigClientWrap');
+    clientAbsent.addEventListener('change', () => {
+      sigClientWrap.classList.toggle('hidden', clientAbsent.checked);
+      if (clientAbsent.checked) sigClient.clear();
+    });
+
+    /* ===== File d'attente hors-ligne ===== */
+    function getQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch { return []; } }
+    function setQueue(q) { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); updateBadge(); }
+    function updateBadge() {
+      const n = getQueue().length;
+      pending.textContent = n ? `⏳ ${n} bon(s) en attente de réseau — envoi automatique dès que possible` : '';
+      pending.classList.toggle('show', n > 0);
+    }
+    async function send(payload) {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+    }
+    async function flushQueue() {
+      let q = getQueue();
+      if (!q.length) return;
+      const remaining = [];
+      for (const item of q) { try { await send(item); } catch { remaining.push(item); } }
+      setQueue(remaining);
+      if (q.length && !remaining.length) showToast(`✅ ${q.length} bon(s) synchronisé(s)`, 'ok');
+    }
+    window.addEventListener('online', flushQueue);
+
+    function collectProduits() {
+      return [...products.children].map(card => {
+        const t = num(card.querySelector('.p-tonnage').value);
+        const d = num(card.querySelector('.p-dose').value);
+        return {
+          produit: card.querySelector('.p-nom').value.trim(),
+          tonnage: t || '',
+          dose_ha: d || '',
+          nombre_ha: (t > 0 && d > 0) ? +(t / d).toFixed(2) : ''
+        };
+      }).filter(p => p.produit || p.tonnage);
+    }
+
+    function resetForm() {
+      form.reset();
+      form.date.value = new Date().toISOString().slice(0, 10);
+      products.innerHTML = ''; addProduct();
+      incidentPhotos.length = 0; renderThumbs();
+      sigChauffeur.clear(); sigClient.clear();
+      clientAbsent.checked = false; sigClientWrap.classList.remove('hidden');
+      stopTick();
+      depotDebut = null; depotFin = null; segStart = null; pauseStart = null;
+      activeMs = 0; pauseMs = 0; pauseCount = 0;
+      document.querySelector('#depotDebutTxt').textContent = '—';
+      document.querySelector('#depotFinTxt').textContent = '—';
+      document.querySelector('#depotDureeTxt').textContent = '';
+      chronoTime.textContent = '00:00';
+      setDepotState('idle');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const produits = collectProduits();
+
+      if (!selDist.value) { showToast('Choisis le distributeur', 'err'); return; }
+      if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); return; }
+      if (!produits.length || !produits.some(p => p.produit && p.tonnage)) { showToast('Ajoute au moins un produit (nom + tonnage)', 'err'); return; }
+      if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); return; }
+      if (!clientAbsent.checked && sigClient.isEmpty()) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); return; }
+
+      const _d = new Date();
+      const data = {
+        token: APP_TOKEN,
+        date: form.date.value,
+        distributeur: selDist.value,
+        client: form.client.value.trim(),
+        nombre_parcelles: form.nombre_parcelles.value || '',
+        depotage_debut: depotDebut ? hhmm(depotDebut) : '',
+        depotage_fin: depotFin ? hhmm(depotFin) : '',
+        depotage_duree: depotDebut ? dureeStrMs(netMs()) : '',
+        depotage_nb_pauses: pauseCount,
+        depotage_pause_totale: pauseCount ? dureeStrMs(totalPauseMs()) : '',
+        observations: form.observations.value.trim(),
+        client_present: clientAbsent.checked ? 'Non' : 'Oui',
+        produits: produits,
+        signature_chauffeur: sigChauffeur.dataUrl().split(',')[1],
+        signature_client: clientAbsent.checked ? '' : sigClient.dataUrl().split(',')[1],
+        photos_incident: incidentPhotos.map(p => p.split(',')[1]),
+        envoye_le: `${pad(_d.getDate())}/${pad(_d.getMonth() + 1)}/${_d.getFullYear()} ${pad(_d.getHours())}h${pad(_d.getMinutes())}`
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours…';
+      try {
+        await send(data);
+        showToast('✅ Bon enregistré', 'ok');
+      } catch (err) {
+        const q = getQueue(); q.push(data); setQueue(q);
+        showToast('📥 Hors-ligne : enregistré, sera envoyé automatiquement', 'warn');
+      } finally {
+        resetForm();
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Enregistrer le bon';
+      }
+    });
+
+    updateBadge();
+    flushQueue();
+  </script>
+</body>
+</html>

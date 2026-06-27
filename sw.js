@@ -1,10 +1,11 @@
 // Service worker — cache l'app pour qu'elle s'ouvre même sans réseau
-const CACHE = "ae-bons-v2";
+const CACHE = "ae-bons-v3";
 const ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./icon.png"
+  "./icon.png",
+  "./logo.png"
 ];
 
 self.addEventListener("install", (e) => {

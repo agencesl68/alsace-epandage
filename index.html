@@ -46,12 +46,7 @@
     /* ===== Header ===== */
     header { background: #fff; border-bottom: 1px solid var(--border); padding: 15px 18px; }
     header .brand { display: flex; align-items: center; gap: 12px; max-width: 520px; margin: 0 auto; }
-    header .brand-mark {
-      width: 46px; height: 46px; flex: 0 0 auto; border-radius: 12px;
-      background: var(--primary); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: 700; letter-spacing: .5px;
-    }
+    header .brand-mark { width: 48px; height: 48px; flex: 0 0 auto; object-fit: contain; display: block; }
     header .brand-name { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: .2px; }
     header .brand-sub { font-size: 12.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
     .pending {
@@ -210,12 +205,41 @@
     .toast.ok { border-left: 3px solid var(--ok); }
     .toast.err { border-left: 3px solid var(--danger); }
     .toast.warn { border-left: 3px solid var(--warn); }
+
+    /* ===== Splash (écran de démarrage) ===== */
+    #splash {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
+      background: #fff;
+      animation: splashOut .55s ease 1.7s forwards;
+    }
+    #splash .s-logo {
+      width: 76%; max-width: 310px; height: auto;
+      animation: splashMark .7s cubic-bezier(.2,.85,.25,1) both;
+    }
+    #splash .s-bar { width: 132px; height: 3px; border-radius: 3px; background: rgba(21,102,58,.16); overflow: hidden; }
+    #splash .s-bar::after { content: ""; display: block; height: 100%; width: 45%; border-radius: 3px; background: var(--primary); animation: splashBar 1.45s ease .3s both; }
+    @keyframes splashMark { 0% { opacity: 0; transform: scale(.7) translateY(10px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes splashRise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+    @keyframes splashBar { 0% { transform: translateX(-115%); } 100% { transform: translateX(330%); } }
+    @keyframes splashOut { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+    header, .wrap { animation: appIn .55s ease 1.75s both; }
+    @keyframes appIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      #splash { animation-delay: .8s; }
+      #splash *, header, .wrap { animation-duration: .01s !important; animation-delay: 0s !important; }
+    }
   </style>
 </head>
 <body>
+  <div id="splash" aria-hidden="true">
+    <img class="s-logo" src="logo.png" alt="Alsace Epandage">
+    <div class="s-bar"></div>
+  </div>
+
   <header>
     <div class="brand">
-      <div class="brand-mark">AE</div>
+      <img class="brand-mark" src="icon.png" alt="Alsace Epandage">
       <div>
         <div class="brand-name">Alsace Epandage</div>
         <div class="brand-sub">Bon d'épandage</div>
@@ -351,6 +375,9 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(() => {});
     }
+
+    // Splash : on retire l'écran de démarrage une fois l'animation finie
+    setTimeout(() => { const sp = document.getElementById('splash'); if (sp) sp.remove(); }, 2500);
 
     // Listes
     const selDist = document.querySelector('#distributeur');

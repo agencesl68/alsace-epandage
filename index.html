@@ -9,22 +9,20 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png">
   <link rel="apple-touch-icon" href="icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <title>Alsace Epandage — Bon d'épandage</title>
   <style>
     :root {
-      --bg: #eef1ee;
+      --bg: #f4f6f4;
       --surface: #ffffff;
-      --surface2: #f6f8f6;
-      --border: #e3e8e3;
-      --border-2: #d4dbd4;
+      --surface2: #fcfdfc;
+      --border: #e6e9e6;
+      --border-2: #dde3dd;
       --primary: #15663a;
       --primary-d: #0f4e2c;
       --primary-l: #e8f1ec;
       --text: #1b2520;
-      --muted: #647067;
+      --muted: #8a948c;
+      --muted-d: #647067;
       --danger: #be123c;
       --ok: #15803d;
       --warn: #b45309;
@@ -32,118 +30,141 @@
       --ic-stop: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='6' y='6' width='12' height='12' rx='2'/%3E%3C/svg%3E");
       --ic-pause: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='6' y='5' width='4' height='14' rx='1'/%3E%3Crect x='14' y='5' width='4' height='14' rx='1'/%3E%3C/svg%3E");
       --ic-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l4 4L19 7'/%3E%3C/svg%3E");
+      --ic-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
       margin: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       min-height: 100vh;
       color: var(--text);
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* ===== Header ===== */
-    header { background: #fff; border-bottom: 1px solid var(--border); padding: 15px 18px; }
-    header .brand { display: flex; align-items: center; gap: 12px; max-width: 520px; margin: 0 auto; }
-    header .brand-mark { width: 48px; height: 48px; flex: 0 0 auto; object-fit: contain; display: block; }
-    header .brand-name { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: .2px; }
-    header .brand-sub { font-size: 12.5px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+    header { background: #fff; border-bottom: 1px solid var(--border); padding: 16px 18px 18px; }
+    .head-inner { max-width: 520px; margin: 0 auto; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { width: 46px; height: 46px; flex: 0 0 auto; object-fit: contain; display: block; }
+    .brand-name { font-size: 15.5px; font-weight: 600; color: var(--text); letter-spacing: -.1px; }
+    .brand-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .step-badge {
+      margin-left: auto; font-size: 11.5px; font-weight: 500; color: var(--primary);
+      background: var(--primary-l); padding: 5px 11px; border-radius: 20px;
+    }
+
+    /* ===== Stepper ===== */
+    .stepper { display: flex; align-items: flex-start; margin-top: 20px; }
+    .snode { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .snode .dot {
+      position: relative; width: 34px; height: 34px; border-radius: 50%;
+      background: #fff; border: 2px solid var(--border); color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; transition: all .2s;
+    }
+    .snode.active .dot { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 0 0 4px var(--primary-l); }
+    .snode.done .dot { background: var(--primary); border-color: var(--primary); }
+    .snode.done .dot .n { display: none; }
+    .snode.done .dot::after {
+      content: ""; position: absolute; inset: 0; background: #fff;
+      -webkit-mask: var(--ic-check) center/16px no-repeat; mask: var(--ic-check) center/16px no-repeat;
+    }
+    .snode .lbl { font-size: 10.5px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+    .snode.active .lbl, .snode.done .lbl { color: var(--primary); font-weight: 500; }
+    .sbar { flex: 1; height: 3px; background: var(--border); margin: 16px 5px 0; border-radius: 2px; transition: background .2s; }
+    .sbar.fill { background: var(--primary); }
+
     .pending {
       display: none; max-width: 520px; margin: 12px auto 0;
       background: #fdf4e7; border: 1px solid #f0d8a8;
-      color: var(--warn); font-size: 12.5px; font-weight: 600; padding: 9px 13px; border-radius: 10px;
+      color: var(--warn); font-size: 12.5px; font-weight: 500; padding: 9px 13px; border-radius: 10px;
     }
     .pending.show { display: block; }
 
-    .wrap { padding: 16px 14px 20px; max-width: 520px; margin: 0 auto; }
-    form { padding: 0 0 10px; }
+    .wrap { padding: 18px 14px 24px; max-width: 520px; margin: 0 auto; }
 
-    /* ===== Sections / cards ===== */
-    .section { margin-bottom: 22px; }
-    .section > .title {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-      color: var(--muted); margin: 0 2px 10px;
-    }
-    .section > .title i { width: 3px; height: 13px; border-radius: 2px; background: var(--primary); }
-    .card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
-      padding: 16px; box-shadow: 0 1px 2px rgba(20,32,22,.04);
-    }
+    /* ===== Steps ===== */
+    .step { display: none; }
+    .step.active { display: block; animation: stepIn .26s ease; }
+    @keyframes stepIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+    .step-head { margin-bottom: 18px; }
+    .step-head h2 { margin: 0 0 3px; font-size: 20px; font-weight: 600; letter-spacing: -.3px; color: var(--text); }
+    .step-head p { margin: 0; font-size: 13px; color: var(--muted); }
 
-    .field { margin-bottom: 14px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .field { margin-bottom: 15px; }
     .field:last-child { margin-bottom: 0; }
-    .row { display: flex; gap: 10px; }
+    .row { display: flex; gap: 11px; }
     .row .field { flex: 1; min-width: 0; }
-    label { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 7px; color: var(--muted); }
+    label { display: block; font-size: 12.5px; font-weight: 500; margin-bottom: 7px; color: var(--muted-d); }
     label .req { color: var(--danger); }
     input, select, textarea {
-      width: 100%; min-width: 0; max-width: 100%; padding: 13px 14px; font-size: 16px;
-      border: 1px solid var(--border-2); border-radius: 10px;
+      width: 100%; min-width: 0; max-width: 100%; padding: 14px; font-size: 16px;
+      border: 1px solid var(--border-2); border-radius: 13px;
       background: #fff; color: var(--text); outline: none;
       -webkit-appearance: none; appearance: none; font-family: inherit;
       transition: border-color .15s, box-shadow .15s;
     }
-    input::placeholder, textarea::placeholder { color: #9aa39c; }
-    input[type="date"] { -webkit-appearance: none; min-height: 49px; }
-    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2315663a' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
+    input::placeholder, textarea::placeholder { color: #aab2ab; }
+    input[type="date"] { -webkit-appearance: none; min-height: 50px; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2315663a' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(21,102,58,.12); }
-    textarea { resize: none; min-height: 78px; line-height: 1.5; }
+    textarea { resize: none; min-height: 90px; line-height: 1.5; }
     .hint { font-size: 11.5px; color: var(--muted); margin: 8px 4px 0; }
 
     /* ===== Dépotage ===== */
     .chrono-live { text-align: center; margin-bottom: 14px; }
-    .chrono-live #chronoTime { font-size: 40px; font-weight: 700; color: var(--text); letter-spacing: .5px; line-height: 1; font-variant-numeric: tabular-nums; }
-    .chrono-live #chronoState { display: block; font-size: 11.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-top: 6px; }
+    .chrono-live #chronoTime { font-size: 42px; font-weight: 600; color: var(--text); letter-spacing: .5px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .chrono-live #chronoState { display: block; font-size: 11.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-top: 7px; }
     .chrono-live.running #chronoTime { color: var(--primary); }
     .chrono-live.paused #chronoTime, .chrono-live.paused #chronoState { color: var(--warn); }
-    .chrono-btn, .pause-btn, button.submit { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-    .chrono-btn::before, .pause-btn::before, button.submit::before {
+    .chrono-btn, .pause-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .chrono-btn::before, .pause-btn::before {
       content: ""; width: 18px; height: 18px; flex: 0 0 auto; background: currentColor;
       -webkit-mask: var(--ic-play) center/contain no-repeat; mask: var(--ic-play) center/contain no-repeat;
     }
     .chrono-btn {
-      width: 100%; padding: 15px; border: none; border-radius: 11px; cursor: pointer;
-      font-size: 15.5px; font-weight: 600; color: #fff; background: var(--primary);
-      box-shadow: 0 1px 2px rgba(20,32,22,.12);
+      width: 100%; padding: 15px; border: none; border-radius: 13px; cursor: pointer;
+      font-size: 15.5px; font-weight: 500; color: #fff; background: var(--primary);
     }
     .chrono-btn.danger { background: var(--danger); }
     .chrono-btn.danger::before { -webkit-mask: var(--ic-stop) center/contain no-repeat; mask: var(--ic-stop) center/contain no-repeat; }
-    .chrono-btn.done { background: var(--surface2); color: var(--ok); box-shadow: none; cursor: default; }
+    .chrono-btn.done { background: var(--surface2); color: var(--ok); cursor: default; }
     .chrono-btn.done::before { -webkit-mask: var(--ic-check) center/contain no-repeat; mask: var(--ic-check) center/contain no-repeat; }
     .chrono-btn:active { filter: brightness(.96); }
     .pause-btn {
-      width: 100%; margin-top: 10px; padding: 12px; border: 1px solid var(--border-2); border-radius: 10px;
-      background: #fff; color: var(--primary); font-size: 14.5px; font-weight: 600; cursor: pointer;
+      width: 100%; margin-top: 10px; padding: 12px; border: 1px solid var(--border-2); border-radius: 12px;
+      background: #fff; color: var(--primary); font-size: 14.5px; font-weight: 500; cursor: pointer;
     }
     .pause-btn::before { width: 16px; height: 16px; -webkit-mask: var(--ic-pause) center/contain no-repeat; mask: var(--ic-pause) center/contain no-repeat; }
     .pause-btn.resumed { color: var(--warn); border-color: var(--warn); }
     .pause-btn.resumed::before { -webkit-mask: var(--ic-play) center/contain no-repeat; mask: var(--ic-play) center/contain no-repeat; }
     .pause-btn[hidden] { display: none; }
     .times { display: flex; justify-content: space-between; margin-top: 16px; }
-    .times .t { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); }
-    .times .v { font-size: 19px; font-weight: 700; color: var(--text); margin-top: 3px; font-variant-numeric: tabular-nums; }
-    .duree { text-align: center; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--primary); }
+    .times .t { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); }
+    .times .v { font-size: 19px; font-weight: 600; color: var(--text); margin-top: 3px; font-variant-numeric: tabular-nums; }
+    .duree { text-align: center; margin-top: 14px; font-size: 13px; font-weight: 500; color: var(--primary); }
 
     /* ===== Produits ===== */
-    .product { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; position: relative; }
+    .product { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 15px; margin-bottom: 12px; position: relative; }
     .product .pnum {
       display: inline-flex; align-items: center;
-      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px;
       color: var(--primary); background: var(--primary-l);
-      padding: 4px 10px; border-radius: 6px; margin-bottom: 12px;
+      padding: 4px 10px; border-radius: 7px; margin-bottom: 13px;
     }
     .product .nbha {
-      background: var(--primary-l); border-radius: 9px; padding: 11px 13px;
-      font-size: 13px; font-weight: 600; color: var(--primary-d); margin-top: 12px;
+      background: var(--primary-l); border-radius: 11px; padding: 11px 13px;
+      font-size: 13px; font-weight: 500; color: var(--primary-d); margin-top: 13px;
     }
-    .product .nbha strong { color: var(--text); }
-    .product .remove { position: absolute; top: 12px; right: 12px; background: none; border: none; color: var(--danger); font-size: 12.5px; font-weight: 600; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; gap: 4px; }
+    .product .nbha strong { color: var(--text); font-weight: 600; }
+    .product .remove { position: absolute; top: 13px; right: 12px; background: none; border: none; color: var(--danger); font-size: 12.5px; font-weight: 500; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; gap: 4px; }
     .product .remove svg { width: 15px; height: 15px; }
     .add-btn {
-      width: 100%; padding: 13px; border: 1px dashed var(--border-2); border-radius: 10px;
-      background: #fff; color: var(--primary); font-size: 14.5px; font-weight: 600; cursor: pointer;
+      width: 100%; padding: 14px; border: 1px dashed var(--border-2); border-radius: 13px;
+      background: #fff; color: var(--primary); font-size: 14.5px; font-weight: 500; cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center; gap: 7px;
     }
     .add-btn svg { width: 18px; height: 18px; }
@@ -152,61 +173,64 @@
     /* ===== Photos ===== */
     .photo-btn {
       display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px;
-      border: 1px dashed var(--border-2); border-radius: 10px; background: #fff;
-      color: var(--primary); font-size: 14.5px; font-weight: 600; cursor: pointer;
+      border: 1px dashed var(--border-2); border-radius: 13px; background: #fff;
+      color: var(--primary); font-size: 14.5px; font-weight: 500; cursor: pointer;
     }
     .photo-btn svg { width: 20px; height: 20px; }
     input[type="file"] { display: none; }
     .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 12px; }
     .thumbs .thumb { position: relative; }
-    .thumbs .thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; display: block; border: 1px solid var(--border); }
+    .thumbs .thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 11px; display: block; border: 1px solid var(--border); }
     .thumbs .thumb button {
       position: absolute; top: 5px; right: 5px; background: rgba(27,37,32,.82); color: #fff; border: none;
       width: 26px; height: 26px; border-radius: 50%; font-size: 15px; cursor: pointer; line-height: 1;
     }
 
     /* ===== Signatures ===== */
-    .sigwrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .sigwrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
     .sighead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .sighead span { font-size: 13px; font-weight: 600; color: var(--text); }
+    .sighead span { font-size: 13px; font-weight: 500; color: var(--text); }
     .sighead span .req { color: var(--danger); }
-    .sighead button { background: #fff; border: 1px solid var(--border-2); color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; padding: 6px 12px; border-radius: 8px; }
-    .sigpad { width: 100%; height: 165px; border-radius: 10px; background: #fcfdfc; border: 1px dashed var(--border-2); touch-action: none; display: block; }
+    .sighead button { background: #fff; border: 1px solid var(--border-2); color: var(--muted-d); font-size: 12px; font-weight: 500; cursor: pointer; padding: 6px 12px; border-radius: 9px; }
+    .sigpad { width: 100%; height: 165px; border-radius: 11px; background: #fcfdfc; border: 1px dashed var(--border-2); touch-action: none; display: block; }
     .absent {
       display: flex; align-items: center; gap: 12px; padding: 14px 16px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; cursor: pointer;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 13px; margin-bottom: 12px; cursor: pointer;
     }
     .absent input { width: 22px; height: 22px; flex: 0 0 auto; accent-color: var(--primary); }
-    .absent label { margin: 0; font-weight: 600; color: var(--text); font-size: 14px; }
+    .absent label { margin: 0; font-weight: 500; color: var(--text); font-size: 14px; }
     .hidden { display: none !important; }
+    .block-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-d); margin: 0 2px 11px; }
+    .block { margin-bottom: 26px; }
 
-    /* ===== Submit (barre collée) ===== */
-    .submitbar {
-      position: sticky; bottom: 0; z-index: 20;
-      margin: 8px -14px 0; padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
-      background: linear-gradient(to top, var(--bg) 62%, rgba(238,241,238,.85) 82%, transparent);
+    /* ===== Navigation (footer par étape) ===== */
+    .nav { display: flex; gap: 11px; margin-top: 24px; }
+    .nav button { padding: 16px; border-radius: 14px; font-size: 15.5px; font-weight: 500; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .nav button:active { filter: brightness(.96); }
+    .nav .back { flex: 0 0 40%; background: #fff; border: 1px solid var(--border-2); color: var(--muted-d); }
+    .nav .next, .nav .submit { flex: 1; border: none; color: #fff; background: var(--primary); box-shadow: 0 6px 18px rgba(21,102,58,.24); }
+    .nav .next::after {
+      content: ""; width: 18px; height: 18px; background: currentColor;
+      -webkit-mask: var(--ic-arrow) center/contain no-repeat; mask: var(--ic-arrow) center/contain no-repeat;
     }
-    button.submit {
-      width: 100%; padding: 16px; font-size: 16px; font-weight: 600; color: #fff;
-      background: var(--primary); border: none; border-radius: 11px; cursor: pointer;
-      box-shadow: 0 2px 8px rgba(21,102,58,.22);
+    .nav .submit::before {
+      content: ""; width: 18px; height: 18px; background: currentColor;
+      -webkit-mask: var(--ic-check) center/contain no-repeat; mask: var(--ic-check) center/contain no-repeat;
     }
-    button.submit::before { -webkit-mask: var(--ic-check) center/contain no-repeat; mask: var(--ic-check) center/contain no-repeat; }
-    button.submit:active { filter: brightness(.96); }
-    button.submit:disabled { opacity: .6; }
+    .nav button:disabled { opacity: .6; }
 
     .toast {
-      position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(140px);
+      position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%) translateY(140px);
       background: #fff; color: var(--text); border: 1px solid var(--border);
-      padding: 13px 18px; border-radius: 10px; font-size: 14.5px; font-weight: 600;
-      box-shadow: 0 8px 24px rgba(20,32,22,.14); transition: transform .3s; z-index: 50; max-width: 90%;
+      padding: 13px 18px; border-radius: 12px; font-size: 14.5px; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(20,32,22,.16); transition: transform .3s; z-index: 50; max-width: 90%;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast.ok { border-left: 3px solid var(--ok); }
     .toast.err { border-left: 3px solid var(--danger); }
     .toast.warn { border-left: 3px solid var(--warn); }
 
-    /* ===== Splash (écran de démarrage) ===== */
+    /* ===== Splash ===== */
     #splash {
       position: fixed; inset: 0; z-index: 100;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
@@ -220,7 +244,6 @@
     #splash .s-bar { width: 132px; height: 3px; border-radius: 3px; background: rgba(21,102,58,.16); overflow: hidden; }
     #splash .s-bar::after { content: ""; display: block; height: 100%; width: 45%; border-radius: 3px; background: var(--primary); animation: splashBar 1.45s ease .3s both; }
     @keyframes splashMark { 0% { opacity: 0; transform: scale(.7) translateY(10px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-    @keyframes splashRise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
     @keyframes splashBar { 0% { transform: translateX(-115%); } 100% { transform: translateX(330%); } }
     @keyframes splashOut { to { opacity: 0; visibility: hidden; pointer-events: none; } }
     header, .wrap { animation: appIn .55s ease 1.75s both; }
@@ -238,11 +261,24 @@
   </div>
 
   <header>
-    <div class="brand">
-      <img class="brand-mark" src="icon.png" alt="Alsace Epandage">
-      <div>
-        <div class="brand-name">Alsace Epandage</div>
-        <div class="brand-sub">Bon d'épandage</div>
+    <div class="head-inner">
+      <div class="brand">
+        <img class="brand-mark" src="icon.png" alt="Alsace Epandage">
+        <div>
+          <div class="brand-name">Alsace Epandage</div>
+          <div class="brand-sub">Bon d'épandage</div>
+        </div>
+        <div class="step-badge" id="stepBadge">1 / 4</div>
+      </div>
+
+      <div class="stepper" id="stepper">
+        <div class="snode active"><div class="dot"><span class="n">1</span></div><div class="lbl">Tracteur</div></div>
+        <div class="sbar"></div>
+        <div class="snode"><div class="dot"><span class="n">2</span></div><div class="lbl">Produits</div></div>
+        <div class="sbar"></div>
+        <div class="snode"><div class="dot"><span class="n">3</span></div><div class="lbl">Dépotage</div></div>
+        <div class="sbar"></div>
+        <div class="snode"><div class="dot"><span class="n">4</span></div><div class="lbl">Signature</div></div>
       </div>
     </div>
     <div class="pending" id="pending"></div>
@@ -251,36 +287,60 @@
   <div class="wrap">
     <form id="form">
 
-      <!-- ===== Infos générales ===== -->
-      <div class="section">
-        <div class="title"><i></i>Informations</div>
+      <!-- ===== Étape 1 : Tracteur & chantier ===== -->
+      <div class="step active" data-step="0">
+        <div class="step-head">
+          <h2>Tracteur &amp; chantier</h2>
+          <p>Distributeur, client et date du bon.</p>
+        </div>
         <div class="card">
+          <div class="field">
+            <label>Distributeur <span class="req">*</span></label>
+            <select name="distributeur" id="distributeur">
+              <option value="" disabled selected>— Choisir —</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Épandage réalisé chez <span class="req">*</span></label>
+            <input type="text" name="client" placeholder="Nom de l'agriculteur">
+          </div>
           <div class="row">
             <div class="field">
               <label>Date <span class="req">*</span></label>
-              <input type="date" name="date" required>
+              <input type="date" name="date">
             </div>
             <div class="field">
               <label>Nb de parcelles</label>
               <input type="number" name="nombre_parcelles" inputmode="numeric" placeholder="ex: 1">
             </div>
           </div>
-          <div class="field">
-            <label>Distributeur <span class="req">*</span></label>
-            <select name="distributeur" id="distributeur" required>
-              <option value="" disabled selected>— Choisir —</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Épandage réalisé chez <span class="req">*</span></label>
-            <input type="text" name="client" placeholder="Nom de l'agriculteur" required>
-          </div>
+        </div>
+        <div class="nav">
+          <button type="button" class="next" data-next>Continuer</button>
         </div>
       </div>
 
-      <!-- ===== Dépotage ===== -->
-      <div class="section">
-        <div class="title"><i></i>Dépotage</div>
+      <!-- ===== Étape 2 : Produits ===== -->
+      <div class="step" data-step="1">
+        <div class="step-head">
+          <h2>Produits épandus</h2>
+          <p>Ajoute chaque produit avec son tonnage.</p>
+        </div>
+        <div id="products"></div>
+        <button type="button" class="add-btn" id="addProduct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un produit</button>
+        <datalist id="produits"></datalist>
+        <div class="nav">
+          <button type="button" class="back" data-back>Retour</button>
+          <button type="button" class="next" data-next>Continuer</button>
+        </div>
+      </div>
+
+      <!-- ===== Étape 3 : Dépotage ===== -->
+      <div class="step" data-step="2">
+        <div class="step-head">
+          <h2>Dépotage</h2>
+          <p>Chronomètre le dépotage (optionnel).</p>
+        </div>
         <div class="card">
           <div class="chrono-live" id="chronoLive">
             <span id="chronoTime">00:00</span>
@@ -294,64 +354,67 @@
           </div>
           <div class="duree" id="depotDureeTxt"></div>
         </div>
+        <div class="nav">
+          <button type="button" class="back" data-back>Retour</button>
+          <button type="button" class="next" data-next>Continuer</button>
+        </div>
       </div>
 
-      <!-- ===== Produits ===== -->
-      <div class="section">
-        <div class="title"><i></i>Produits épandus</div>
-        <div id="products"></div>
-        <button type="button" class="add-btn" id="addProduct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un produit</button>
-        <datalist id="produits"></datalist>
-      </div>
+      <!-- ===== Étape 4 : Signatures & validation ===== -->
+      <div class="step" data-step="3">
+        <div class="step-head">
+          <h2>Signatures &amp; validation</h2>
+          <p>Observations, photos puis signatures.</p>
+        </div>
 
-      <!-- ===== Observations ===== -->
-      <div class="section">
-        <div class="title"><i></i>Observations</div>
-        <div class="card">
-          <div class="field">
-            <textarea name="observations" placeholder="Remarque éventuelle (incident, accès, météo…)"></textarea>
+        <div class="block">
+          <div class="block-title">Observations</div>
+          <div class="card">
+            <div class="field">
+              <textarea name="observations" placeholder="Remarque éventuelle (incident, accès, météo…)"></textarea>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- ===== Photos incident ===== -->
-      <div class="section">
-        <div class="title"><i></i>Photos <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0;margin-left:4px">· option si incident</span></div>
-        <label class="photo-btn" for="fileIncident">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/>
-          </svg>
-          <span>Ajouter une photo</span>
-        </label>
-        <input type="file" id="fileIncident" accept="image/*" capture="environment">
-        <div class="thumbs" id="incidentList"></div>
-      </div>
-
-      <!-- ===== Signatures ===== -->
-      <div class="section">
-        <div class="title"><i></i>Signatures</div>
-        <p class="hint" style="margin:0 4px 12px">L'agriculteur déclare être satisfait de l'épandage.</p>
-
-        <div class="sigwrap">
-          <div class="sighead"><span>Signature chauffeur <span class="req">*</span></span><button type="button" data-clear="chauffeur">Effacer</button></div>
-          <canvas class="sigpad" id="sigChauffeur"></canvas>
+        <div class="block">
+          <div class="block-title">Photos · option si incident</div>
+          <label class="photo-btn" for="fileIncident">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span>Ajouter une photo</span>
+          </label>
+          <input type="file" id="fileIncident" accept="image/*" capture="environment">
+          <div class="thumbs" id="incidentList"></div>
         </div>
 
-        <div class="absent">
-          <input type="checkbox" id="clientAbsent">
-          <label for="clientAbsent">Client absent (pas de signature)</label>
+        <div class="block">
+          <div class="block-title">Signatures</div>
+          <p class="hint" style="margin:0 4px 12px">L'agriculteur déclare être satisfait de l'épandage.</p>
+
+          <div class="sigwrap">
+            <div class="sighead"><span>Signature chauffeur <span class="req">*</span></span><button type="button" data-clear="chauffeur">Effacer</button></div>
+            <canvas class="sigpad" id="sigChauffeur"></canvas>
+          </div>
+
+          <div class="absent">
+            <input type="checkbox" id="clientAbsent">
+            <label for="clientAbsent">Client absent (pas de signature)</label>
+          </div>
+
+          <div class="sigwrap" id="sigClientWrap">
+            <div class="sighead"><span>Signature client</span><button type="button" data-clear="client">Effacer</button></div>
+            <canvas class="sigpad" id="sigClient"></canvas>
+          </div>
         </div>
 
-        <div class="sigwrap" id="sigClientWrap">
-          <div class="sighead"><span>Signature client</span><button type="button" data-clear="client">Effacer</button></div>
-          <canvas class="sigpad" id="sigClient"></canvas>
+        <div class="nav">
+          <button type="button" class="back" data-back>Retour</button>
+          <button type="submit" class="submit" id="submitBtn">Enregistrer le bon</button>
         </div>
       </div>
 
-      <div class="submitbar">
-        <button type="submit" class="submit" id="submitBtn">Enregistrer le bon</button>
-      </div>
     </form>
   </div>
 
@@ -395,6 +458,42 @@
       toast.className = 'toast show ' + (type || '');
       setTimeout(() => { toast.className = 'toast ' + (type || ''); }, 3500);
     }
+
+    /* ===== Navigation par étapes (stepper) ===== */
+    const steps = [...document.querySelectorAll('.step')];
+    const snodes = [...document.querySelectorAll('.snode')];
+    const sbars = [...document.querySelectorAll('.sbar')];
+    let current = 0;
+
+    function validateStep(i) {
+      if (i === 0) {
+        if (!selDist.value) { showToast('Choisis le distributeur', 'err'); return false; }
+        if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); return false; }
+      } else if (i === 1) {
+        const p = collectProduits();
+        if (!p.length || !p.some(x => x.produit && x.tonnage)) { showToast('Ajoute au moins un produit (nom + tonnage)', 'err'); return false; }
+      }
+      return true;
+    }
+    function goTo(i) {
+      current = i;
+      steps.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      snodes.forEach((n, idx) => { n.classList.toggle('active', idx === i); n.classList.toggle('done', idx < i); });
+      sbars.forEach((b, idx) => b.classList.toggle('fill', idx < i));
+      document.querySelector('#stepBadge').textContent = (i + 1) + ' / 4';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (i === 3) { sigChauffeur.resize(); sigClient.resize(); }
+    }
+    document.querySelectorAll('[data-next]').forEach(btn => {
+      btn.addEventListener('click', () => { if (validateStep(current)) goTo(current + 1); });
+    });
+    document.querySelectorAll('[data-back]').forEach(btn => {
+      btn.addEventListener('click', () => goTo(Math.max(0, current - 1)));
+    });
+    // Permet de revenir à une étape déjà validée en tapant sur sa pastille
+    snodes.forEach((node, idx) => {
+      node.addEventListener('click', () => { if (idx < current) goTo(idx); });
+    });
 
     /* ===== Dépotage (chrono avec pause) ===== */
     const chronoBtn = document.querySelector('#chronoBtn');
@@ -549,15 +648,17 @@
     /* ===== Signatures ===== */
     function initSignature(canvas) {
       const ctx = canvas.getContext('2d');
-      let drawing = false, hasInk = false, last = null;
+      let drawing = false, hasInk = false, last = null, didSetup = false;
       function setup() {
         const ratio = window.devicePixelRatio || 1;
         const rect = canvas.getBoundingClientRect();
+        if (!rect.width) return; // pas encore visible
         canvas.width = rect.width * ratio;
         canvas.height = rect.height * ratio;
         ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
         ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         ctx.strokeStyle = '#15161a';
+        didSetup = true;
       }
       function pos(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
       canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); drawing = true; last = pos(e); });
@@ -571,11 +672,11 @@
       canvas.addEventListener('pointerup', stop);
       canvas.addEventListener('pointerleave', stop);
       canvas.addEventListener('pointercancel', stop);
-      setTimeout(setup, 0);
       return {
         isEmpty: () => !hasInk,
         clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; },
-        dataUrl: () => canvas.toDataURL('image/png')
+        dataUrl: () => canvas.toDataURL('image/png'),
+        resize: () => { if (!didSetup) setup(); }   // initialise au 1er affichage de l'étape
       };
     }
     const sigChauffeur = initSignature(document.querySelector('#sigChauffeur'));
@@ -645,15 +746,16 @@
       document.querySelector('#depotDureeTxt').textContent = '';
       chronoTime.textContent = '00:00';
       setDepotState('idle');
+      goTo(0);
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const produits = collectProduits();
 
-      if (!selDist.value) { showToast('Choisis le distributeur', 'err'); return; }
-      if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); return; }
-      if (!produits.length || !produits.some(p => p.produit && p.tonnage)) { showToast('Ajoute au moins un produit (nom + tonnage)', 'err'); return; }
+      if (!selDist.value) { showToast('Choisis le distributeur', 'err'); goTo(0); return; }
+      if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); goTo(0); return; }
+      if (!produits.length || !produits.some(p => p.produit && p.tonnage)) { showToast('Ajoute au moins un produit (nom + tonnage)', 'err'); goTo(1); return; }
       if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); return; }
       if (!clientAbsent.checked && sigClient.isEmpty()) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); return; }
 

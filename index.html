@@ -26,9 +26,6 @@
       --danger: #be123c;
       --ok: #15803d;
       --warn: #b45309;
-      --ic-play: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E");
-      --ic-stop: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='6' y='6' width='12' height='12' rx='2'/%3E%3C/svg%3E");
-      --ic-pause: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='6' y='5' width='4' height='14' rx='1'/%3E%3Crect x='14' y='5' width='4' height='14' rx='1'/%3E%3C/svg%3E");
       --ic-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l4 4L19 7'/%3E%3C/svg%3E");
       --ic-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
     }
@@ -36,56 +33,35 @@
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg);
-      min-height: 100vh;
-      color: var(--text);
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
+      background: var(--bg); min-height: 100vh; color: var(--text);
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== Header ===== */
     header { background: #fff; border-bottom: 1px solid var(--border); padding: 16px 18px 18px; }
     .head-inner { max-width: 520px; margin: 0 auto; }
     .brand { display: flex; align-items: center; gap: 12px; }
     .brand-mark { width: 46px; height: 46px; flex: 0 0 auto; object-fit: contain; display: block; }
     .brand-name { font-size: 15.5px; font-weight: 600; color: var(--text); letter-spacing: -.1px; }
     .brand-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
-    .step-badge {
-      margin-left: auto; font-size: 11.5px; font-weight: 500; color: var(--primary);
-      background: var(--primary-l); padding: 5px 11px; border-radius: 20px;
-    }
+    .step-badge { margin-left: auto; font-size: 11.5px; font-weight: 500; color: var(--primary); background: var(--primary-l); padding: 5px 11px; border-radius: 20px; }
 
-    /* ===== Stepper ===== */
     .stepper { display: flex; align-items: flex-start; margin-top: 20px; }
     .snode { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .snode .dot {
-      position: relative; width: 34px; height: 34px; border-radius: 50%;
-      background: #fff; border: 2px solid var(--border); color: var(--muted);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 600; transition: all .2s;
-    }
+    .snode .dot { position: relative; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid var(--border); color: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; transition: all .2s; }
     .snode.active .dot { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 0 0 4px var(--primary-l); }
     .snode.done .dot { background: var(--primary); border-color: var(--primary); }
     .snode.done .dot .n { display: none; }
-    .snode.done .dot::after {
-      content: ""; position: absolute; inset: 0; background: #fff;
-      -webkit-mask: var(--ic-check) center/16px no-repeat; mask: var(--ic-check) center/16px no-repeat;
-    }
-    .snode .lbl { font-size: 10.5px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+    .snode.done .dot::after { content: ""; position: absolute; inset: 0; background: #fff; -webkit-mask: var(--ic-check) center/15px no-repeat; mask: var(--ic-check) center/15px no-repeat; }
+    .snode .lbl { font-size: 10px; font-weight: 400; color: var(--muted); white-space: nowrap; }
     .snode.active .lbl, .snode.done .lbl { color: var(--primary); font-weight: 500; }
-    .sbar { flex: 1; height: 3px; background: var(--border); margin: 16px 5px 0; border-radius: 2px; transition: background .2s; }
+    .sbar { flex: 1; height: 3px; background: var(--border); margin: 15px 4px 0; border-radius: 2px; transition: background .2s; }
     .sbar.fill { background: var(--primary); }
 
-    .pending {
-      display: none; max-width: 520px; margin: 12px auto 0;
-      background: #fdf4e7; border: 1px solid #f0d8a8;
-      color: var(--warn); font-size: 12.5px; font-weight: 500; padding: 9px 13px; border-radius: 10px;
-    }
+    .pending { display: none; max-width: 520px; margin: 12px auto 0; background: #fdf4e7; border: 1px solid #f0d8a8; color: var(--warn); font-size: 12.5px; font-weight: 500; padding: 9px 13px; border-radius: 10px; }
     .pending.show { display: block; }
 
     .wrap { padding: 18px 14px 24px; max-width: 520px; margin: 0 auto; }
 
-    /* ===== Steps ===== */
     .step { display: none; }
     .step.active { display: block; animation: stepIn .26s ease; }
     @keyframes stepIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
@@ -94,153 +70,104 @@
     .step-head p { margin: 0; font-size: 13px; color: var(--muted); }
 
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .card + .card { margin-top: 12px; }
     .field { margin-bottom: 15px; }
     .field:last-child { margin-bottom: 0; }
     .row { display: flex; gap: 11px; }
     .row .field { flex: 1; min-width: 0; }
     label { display: block; font-size: 12.5px; font-weight: 500; margin-bottom: 7px; color: var(--muted-d); }
     label .req { color: var(--danger); }
-    input, select, textarea {
-      width: 100%; min-width: 0; max-width: 100%; padding: 14px; font-size: 16px;
-      border: 1px solid var(--border-2); border-radius: 13px;
-      background: #fff; color: var(--text); outline: none;
-      -webkit-appearance: none; appearance: none; font-family: inherit;
-      transition: border-color .15s, box-shadow .15s;
-    }
+    input, select, textarea { width: 100%; min-width: 0; max-width: 100%; padding: 14px; font-size: 16px; border: 1px solid var(--border-2); border-radius: 13px; background: #fff; color: var(--text); outline: none; -webkit-appearance: none; appearance: none; font-family: inherit; transition: border-color .15s, box-shadow .15s; }
     input::placeholder, textarea::placeholder { color: #aab2ab; }
     input[type="date"] { -webkit-appearance: none; min-height: 50px; }
     select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2315663a' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(21,102,58,.12); }
     textarea { resize: none; min-height: 90px; line-height: 1.5; }
-    .hint { font-size: 11.5px; color: var(--muted); margin: 8px 4px 0; }
+    .hint { font-size: 11.5px; color: var(--muted); margin: 9px 2px 0; line-height: 1.45; }
 
-    /* ===== Dépotage ===== */
-    .chrono-live { text-align: center; margin-bottom: 14px; }
+    .check { display: flex; align-items: center; gap: 11px; margin-top: 16px; font-size: 13.5px; font-weight: 500; color: var(--text); cursor: pointer; }
+    .check input { width: 21px; height: 21px; flex: 0 0 auto; accent-color: var(--primary); }
+
+    .early-btn { width: 100%; margin-top: 12px; padding: 15px; border: 1px dashed var(--primary); border-radius: 13px; background: var(--primary-l); color: var(--primary-d); font-size: 14.5px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .early-btn svg { width: 18px; height: 18px; }
+    .early-btn:active { filter: brightness(.97); }
+
+    /* Épandage */
+    .chrono-live { text-align: center; margin-bottom: 16px; }
     .chrono-live #chronoTime { font-size: 42px; font-weight: 600; color: var(--text); letter-spacing: .5px; line-height: 1; font-variant-numeric: tabular-nums; }
     .chrono-live #chronoState { display: block; font-size: 11.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); margin-top: 7px; }
     .chrono-live.running #chronoTime { color: var(--primary); }
-    .chrono-live.paused #chronoTime, .chrono-live.paused #chronoState { color: var(--warn); }
-    .chrono-btn, .pause-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-    .chrono-btn::before, .pause-btn::before {
-      content: ""; width: 18px; height: 18px; flex: 0 0 auto; background: currentColor;
-      -webkit-mask: var(--ic-play) center/contain no-repeat; mask: var(--ic-play) center/contain no-repeat;
-    }
-    .chrono-btn {
-      width: 100%; padding: 15px; border: none; border-radius: 13px; cursor: pointer;
-      font-size: 15.5px; font-weight: 500; color: #fff; background: var(--primary);
-    }
-    .chrono-btn.danger { background: var(--danger); }
-    .chrono-btn.danger::before { -webkit-mask: var(--ic-stop) center/contain no-repeat; mask: var(--ic-stop) center/contain no-repeat; }
+    .chrono-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 16px; border: none; border-radius: 13px; cursor: pointer; font-size: 15.5px; font-weight: 500; color: #fff; background: var(--primary); }
     .chrono-btn.done { background: var(--surface2); color: var(--ok); cursor: default; }
-    .chrono-btn.done::before { -webkit-mask: var(--ic-check) center/contain no-repeat; mask: var(--ic-check) center/contain no-repeat; }
+    .chrono-btn.done::before { content: ""; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--ic-check) center/contain no-repeat; mask: var(--ic-check) center/contain no-repeat; }
     .chrono-btn:active { filter: brightness(.96); }
-    .pause-btn {
-      width: 100%; margin-top: 10px; padding: 12px; border: 1px solid var(--border-2); border-radius: 12px;
-      background: #fff; color: var(--primary); font-size: 14.5px; font-weight: 500; cursor: pointer;
-    }
-    .pause-btn::before { width: 16px; height: 16px; -webkit-mask: var(--ic-pause) center/contain no-repeat; mask: var(--ic-pause) center/contain no-repeat; }
-    .pause-btn.resumed { color: var(--warn); border-color: var(--warn); }
-    .pause-btn.resumed::before { -webkit-mask: var(--ic-play) center/contain no-repeat; mask: var(--ic-play) center/contain no-repeat; }
-    .pause-btn[hidden] { display: none; }
-    .times { display: flex; justify-content: space-between; margin-top: 16px; }
-    .times .t { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); }
-    .times .v { font-size: 19px; font-weight: 600; color: var(--text); margin-top: 3px; font-variant-numeric: tabular-nums; }
-    .duree { text-align: center; margin-top: 14px; font-size: 13px; font-weight: 500; color: var(--primary); }
+    .times3 { margin-top: 18px; }
+    .trow { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-top: 1px solid var(--border); }
+    .trow:first-child { border-top: none; }
+    .trow .t { font-size: 12.5px; font-weight: 500; color: var(--muted-d); }
+    .trow .v { font-size: 17px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+    .trow.on .v { color: var(--primary); }
+    .duree { text-align: center; margin-top: 14px; font-size: 13px; font-weight: 500; color: var(--primary); line-height: 1.5; }
 
-    /* ===== Produits ===== */
-    .product { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 15px; margin-bottom: 12px; position: relative; }
-    .product .pnum {
-      display: inline-flex; align-items: center;
-      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px;
-      color: var(--primary); background: var(--primary-l);
-      padding: 4px 10px; border-radius: 7px; margin-bottom: 13px;
-    }
-    .product .nbha {
-      background: var(--primary-l); border-radius: 11px; padding: 11px 13px;
-      font-size: 13px; font-weight: 500; color: var(--primary-d); margin-top: 13px;
-    }
-    .product .nbha strong { color: var(--text); font-weight: 600; }
-    .product .remove { position: absolute; top: 13px; right: 12px; background: none; border: none; color: var(--danger); font-size: 12.5px; font-weight: 500; cursor: pointer; padding: 4px; display: inline-flex; align-items: center; gap: 4px; }
-    .product .remove svg { width: 15px; height: 15px; }
-    .add-btn {
-      width: 100%; padding: 14px; border: 1px dashed var(--border-2); border-radius: 13px;
-      background: #fff; color: var(--primary); font-size: 14.5px; font-weight: 500; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    }
-    .add-btn svg { width: 18px; height: 18px; }
-    .add-btn:active { background: var(--surface2); }
-
-    /* ===== Photos ===== */
-    .photo-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px;
-      border: 1px dashed var(--border-2); border-radius: 13px; background: #fff;
-      color: var(--primary); font-size: 14.5px; font-weight: 500; cursor: pointer;
-    }
+    /* Photos */
+    .photo-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; border: 1px dashed var(--border-2); border-radius: 13px; background: #fff; color: var(--primary); font-size: 14.5px; font-weight: 500; cursor: pointer; }
     .photo-btn svg { width: 20px; height: 20px; }
     input[type="file"] { display: none; }
     .thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 12px; }
+    .thumbs:empty { margin-top: 0; }
     .thumbs .thumb { position: relative; }
     .thumbs .thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 11px; display: block; border: 1px solid var(--border); }
-    .thumbs .thumb button {
-      position: absolute; top: 5px; right: 5px; background: rgba(27,37,32,.82); color: #fff; border: none;
-      width: 26px; height: 26px; border-radius: 50%; font-size: 15px; cursor: pointer; line-height: 1;
-    }
+    .thumbs .thumb button { position: absolute; top: 5px; right: 5px; background: rgba(27,37,32,.82); color: #fff; border: none; width: 26px; height: 26px; border-radius: 50%; font-size: 15px; cursor: pointer; line-height: 1; }
 
-    /* ===== Signatures ===== */
+    /* Signatures */
     .sigwrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
     .sighead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .sighead span { font-size: 13px; font-weight: 500; color: var(--text); }
     .sighead span .req { color: var(--danger); }
     .sighead button { background: #fff; border: 1px solid var(--border-2); color: var(--muted-d); font-size: 12px; font-weight: 500; cursor: pointer; padding: 6px 12px; border-radius: 9px; }
-    .sigpad { width: 100%; height: 165px; border-radius: 11px; background: #fcfdfc; border: 1px dashed var(--border-2); touch-action: none; display: block; }
-    .absent {
-      display: flex; align-items: center; gap: 12px; padding: 14px 16px;
-      background: var(--surface); border: 1px solid var(--border); border-radius: 13px; margin-bottom: 12px; cursor: pointer;
-    }
+    .sigpad { width: 100%; height: 175px; border-radius: 11px; background: #fcfdfc; border: 1px dashed var(--border-2); touch-action: none; display: block; }
+    .absent { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 13px; margin-bottom: 12px; cursor: pointer; }
     .absent input { width: 22px; height: 22px; flex: 0 0 auto; accent-color: var(--primary); }
     .absent label { margin: 0; font-weight: 500; color: var(--text); font-size: 14px; }
+    .signed-ok { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--primary-l); border-radius: 13px; color: var(--primary-d); font-weight: 500; font-size: 14px; margin-bottom: 12px; }
+    .signed-ok svg { width: 22px; height: 22px; flex: 0 0 auto; }
+    .signed-ok button { margin-left: auto; background: #fff; border: 1px solid var(--border-2); color: var(--muted-d); font-size: 12px; font-weight: 500; cursor: pointer; padding: 6px 12px; border-radius: 9px; }
     .hidden { display: none !important; }
     .block-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-d); margin: 0 2px 11px; }
+    .block-title .req { color: var(--danger); }
     .block { margin-bottom: 26px; }
 
-    /* ===== Navigation (footer par étape) ===== */
+    /* Envoi */
+    .send-opts { display: flex; gap: 9px; }
+    .send-opt { flex: 1; text-align: center; padding: 14px 6px; border: 1px solid var(--border-2); border-radius: 13px; background: #fff; font-size: 13.5px; font-weight: 500; color: var(--muted-d); cursor: pointer; }
+    .send-opt.active { border-color: var(--primary); color: var(--primary); background: var(--primary-l); box-shadow: 0 0 0 2px rgba(21,102,58,.12); }
+    #envoiHint { margin-top: 10px; }
+
     .nav { display: flex; gap: 11px; margin-top: 24px; }
     .nav button { padding: 16px; border-radius: 14px; font-size: 15.5px; font-weight: 500; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .nav button:active { filter: brightness(.96); }
     .nav .back { flex: 0 0 40%; background: #fff; border: 1px solid var(--border-2); color: var(--muted-d); }
     .nav .next, .nav .submit { flex: 1; border: none; color: #fff; background: var(--primary); box-shadow: 0 6px 18px rgba(21,102,58,.24); }
-    .nav .next::after {
-      content: ""; width: 18px; height: 18px; background: currentColor;
-      -webkit-mask: var(--ic-arrow) center/contain no-repeat; mask: var(--ic-arrow) center/contain no-repeat;
-    }
-    .nav .submit::before {
-      content: ""; width: 18px; height: 18px; background: currentColor;
-      -webkit-mask: var(--ic-check) center/contain no-repeat; mask: var(--ic-check) center/contain no-repeat;
-    }
+    .nav .next::after { content: ""; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--ic-arrow) center/contain no-repeat; mask: var(--ic-arrow) center/contain no-repeat; }
+    .nav .submit::before { content: ""; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--ic-check) center/contain no-repeat; mask: var(--ic-check) center/contain no-repeat; }
     .nav button:disabled { opacity: .6; }
 
-    .toast {
-      position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%) translateY(140px);
-      background: #fff; color: var(--text); border: 1px solid var(--border);
-      padding: 13px 18px; border-radius: 12px; font-size: 14.5px; font-weight: 500;
-      box-shadow: 0 8px 24px rgba(20,32,22,.16); transition: transform .3s; z-index: 50; max-width: 90%;
-    }
+    .toast { position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%) translateY(140px); background: #fff; color: var(--text); border: 1px solid var(--border); padding: 13px 18px; border-radius: 12px; font-size: 14.5px; font-weight: 500; box-shadow: 0 8px 24px rgba(20,32,22,.16); transition: transform .3s; z-index: 60; max-width: 90%; }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast.ok { border-left: 3px solid var(--ok); }
     .toast.err { border-left: 3px solid var(--danger); }
     .toast.warn { border-left: 3px solid var(--warn); }
 
-    /* ===== Splash ===== */
-    #splash {
-      position: fixed; inset: 0; z-index: 100;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px;
-      background: #fff;
-      animation: splashOut .55s ease 1.7s forwards;
-    }
-    #splash .s-logo {
-      width: 76%; max-width: 310px; height: auto;
-      animation: splashMark .7s cubic-bezier(.2,.85,.25,1) both;
-    }
+    /* Overlay signature client au début */
+    .overlay { position: fixed; inset: 0; z-index: 150; background: #fff; display: none; flex-direction: column; padding: 20px 18px calc(18px + env(safe-area-inset-bottom)); }
+    .overlay.show { display: flex; }
+    .overlay h3 { margin: 0 0 3px; font-size: 18px; font-weight: 600; color: var(--text); }
+    .overlay .ov-sub { margin: 0 0 16px; font-size: 12.5px; color: var(--muted); }
+    .overlay .sigpad { flex: 1; height: auto; min-height: 220px; }
+
+    /* Splash */
+    #splash { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; background: #fff; animation: splashOut .55s ease 1.7s forwards; }
+    #splash .s-logo { width: 76%; max-width: 310px; height: auto; animation: splashMark .7s cubic-bezier(.2,.85,.25,1) both; }
     #splash .s-bar { width: 132px; height: 3px; border-radius: 3px; background: rgba(21,102,58,.16); overflow: hidden; }
     #splash .s-bar::after { content: ""; display: block; height: 100%; width: 45%; border-radius: 3px; background: var(--primary); animation: splashBar 1.45s ease .3s both; }
     @keyframes splashMark { 0% { opacity: 0; transform: scale(.7) translateY(10px); } 60% { opacity: 1; } 100% { opacity: 1; transform: scale(1) translateY(0); } }
@@ -248,10 +175,7 @@
     @keyframes splashOut { to { opacity: 0; visibility: hidden; pointer-events: none; } }
     header, .wrap { animation: appIn .55s ease 1.75s both; }
     @keyframes appIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-    @media (prefers-reduced-motion: reduce) {
-      #splash { animation-delay: .8s; }
-      #splash *, header, .wrap { animation-duration: .01s !important; animation-delay: 0s !important; }
-    }
+    @media (prefers-reduced-motion: reduce) { #splash { animation-delay: .8s; } #splash *, header, .wrap { animation-duration: .01s !important; animation-delay: 0s !important; } }
   </style>
 </head>
 <body>
@@ -268,17 +192,18 @@
           <div class="brand-name">Alsace Epandage</div>
           <div class="brand-sub">Bon d'épandage</div>
         </div>
-        <div class="step-badge" id="stepBadge">1 / 4</div>
+        <div class="step-badge" id="stepBadge">1 / 5</div>
       </div>
-
       <div class="stepper" id="stepper">
-        <div class="snode active"><div class="dot"><span class="n">1</span></div><div class="lbl">Tracteur</div></div>
+        <div class="snode active"><div class="dot"><span class="n">1</span></div><div class="lbl">Chantier</div></div>
         <div class="sbar"></div>
-        <div class="snode"><div class="dot"><span class="n">2</span></div><div class="lbl">Produits</div></div>
+        <div class="snode"><div class="dot"><span class="n">2</span></div><div class="lbl">Produit</div></div>
         <div class="sbar"></div>
-        <div class="snode"><div class="dot"><span class="n">3</span></div><div class="lbl">Dépotage</div></div>
+        <div class="snode"><div class="dot"><span class="n">3</span></div><div class="lbl">Épandage</div></div>
         <div class="sbar"></div>
-        <div class="snode"><div class="dot"><span class="n">4</span></div><div class="lbl">Signature</div></div>
+        <div class="snode"><div class="dot"><span class="n">4</span></div><div class="lbl">Chauffeur</div></div>
+        <div class="sbar"></div>
+        <div class="snode"><div class="dot"><span class="n">5</span></div><div class="lbl">Client</div></div>
       </div>
     </div>
     <div class="pending" id="pending"></div>
@@ -287,47 +212,78 @@
   <div class="wrap">
     <form id="form">
 
-      <!-- ===== Étape 1 : Tracteur & chantier ===== -->
+      <!-- ===== Étape 1 : Chantier ===== -->
       <div class="step active" data-step="0">
-        <div class="step-head">
-          <h2>Tracteur &amp; chantier</h2>
-          <p>Distributeur, client et date du bon.</p>
-        </div>
+        <div class="step-head"><h2>Chantier</h2><p>Chauffeur, RDV, client et lieu.</p></div>
+
         <div class="card">
           <div class="field">
-            <label>Distributeur <span class="req">*</span></label>
-            <select name="distributeur" id="distributeur">
-              <option value="" disabled selected>— Choisir —</option>
-            </select>
+            <label>Chauffeur <span class="req">*</span></label>
+            <select name="chauffeur" id="chauffeur"><option value="" disabled selected>— Qui es-tu ? —</option></select>
           </div>
+          <div class="field">
+            <label>RDV du jour</label>
+            <select id="rdvSelect"><option value="">— Saisie manuelle —</option></select>
+            <div class="hint" id="rdvHint">Coche ton RDV pour pré-remplir client, distributeur et heure.</div>
+          </div>
+        </div>
+
+        <div class="card">
           <div class="field">
             <label>Épandage réalisé chez <span class="req">*</span></label>
             <input type="text" name="client" placeholder="Nom de l'agriculteur">
           </div>
-          <div class="row">
-            <div class="field">
-              <label>Date <span class="req">*</span></label>
-              <input type="date" name="date">
-            </div>
-            <div class="field">
-              <label>Nb de parcelles</label>
-              <input type="number" name="nombre_parcelles" inputmode="numeric" placeholder="ex: 1">
-            </div>
+          <div class="field">
+            <label>Distributeur <span class="req">*</span></label>
+            <select name="distributeur" id="distributeur"><option value="" disabled selected>— Choisir —</option></select>
           </div>
+          <div class="row">
+            <div class="field"><label>Téléphone client</label><input type="tel" name="tel_client" inputmode="tel" placeholder="ex: 06 12 34 56 78"></div>
+            <div class="field"><label>Email client</label><input type="email" name="email_client" inputmode="email" placeholder="ex: ferme@mail.fr"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Code postal</label><input type="text" name="code_postal" inputmode="numeric" placeholder="ex: 68580"></div>
+            <div class="field"><label>Village</label><input type="text" name="village" placeholder="ex: Friesen"></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Date <span class="req">*</span></label><input type="date" name="date"></div>
+            <div class="field"><label>Heure RDV</label><input type="text" name="heure_rdv" inputmode="numeric" placeholder="ex: 14:30"></div>
+          </div>
+          <div class="field"><label>Nb de parcelles</label><input type="number" name="nombre_parcelles" inputmode="numeric" placeholder="ex: 1"></div>
         </div>
-        <div class="nav">
-          <button type="button" class="next" data-next>Continuer</button>
-        </div>
+
+        <button type="button" class="early-btn" id="signClientEarly">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+          Faire signer le client maintenant
+        </button>
+        <div class="hint" style="text-align:center">À utiliser si le client doit partir avant la fin.</div>
+
+        <div class="nav"><button type="button" class="next" data-next>Continuer</button></div>
       </div>
 
-      <!-- ===== Étape 2 : Produits ===== -->
+      <!-- ===== Étape 2 : Produit ===== -->
       <div class="step" data-step="1">
-        <div class="step-head">
-          <h2>Produits épandus</h2>
-          <p>Ajoute chaque produit avec son tonnage.</p>
+        <div class="step-head"><h2>Produit</h2><p>Produit livré et tonnages.</p></div>
+        <div class="card">
+          <div class="field">
+            <label>Produit <span class="req">*</span></label>
+            <input type="text" name="produit" id="pNom" list="produits" placeholder="ex: Calcifertil 54">
+          </div>
+          <div class="row">
+            <div class="field"><label>Tonnage BL camion (T) <span class="req">*</span></label><input type="text" name="tonnage_bl" id="pTonnageBL" inputmode="decimal" placeholder="ex: 44"></div>
+            <div class="field"><label>Tonnage réel (T) <span class="req">*</span></label><input type="text" name="tonnage_reel" id="pTonnageReel" inputmode="decimal" placeholder="ex: 42,5"></div>
+          </div>
+          <div class="hint">Tonnage indiqué sur le BL du camion (ex. 44 T) vs. tonnage réellement épandu.</div>
+          <div class="field" style="margin-top:15px">
+            <label>Nombre d'hectares (ha)</label>
+            <input type="text" name="nb_ha" id="nbHa" inputmode="decimal" placeholder="ex: 35,4 (moyenne si plusieurs parcelles)">
+          </div>
+          <label class="check"><input type="checkbox" id="calcHa">Calculer automatiquement (tonnage ÷ dose)</label>
+          <div id="haBlock" class="hidden">
+            <div class="field" style="margin-top:14px"><label>Dose/ha (T/ha)</label><input type="text" id="pDose" inputmode="decimal" placeholder="ex: 1,2"></div>
+            <div class="hint">Le résultat remplit le champ ci-dessus — tu peux toujours le corriger à la main.</div>
+          </div>
         </div>
-        <div id="products"></div>
-        <button type="button" class="add-btn" id="addProduct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter un produit</button>
         <datalist id="produits"></datalist>
         <div class="nav">
           <button type="button" class="back" data-back>Retour</button>
@@ -335,24 +291,22 @@
         </div>
       </div>
 
-      <!-- ===== Étape 3 : Dépotage ===== -->
+      <!-- ===== Étape 3 : Épandage ===== -->
       <div class="step" data-step="2">
-        <div class="step-head">
-          <h2>Dépotage</h2>
-          <p>Chronomètre le dépotage (optionnel).</p>
-        </div>
+        <div class="step-head"><h2>Épandage</h2><p>Démarre, puis marque le début et la fin du dépotage, et la fin du chantier.</p></div>
         <div class="card">
           <div class="chrono-live" id="chronoLive">
             <span id="chronoTime">00:00</span>
             <span id="chronoState">Prêt à démarrer</span>
           </div>
-          <button type="button" class="chrono-btn" id="chronoBtn">Démarrer le dépotage</button>
-          <button type="button" class="pause-btn" id="pauseBtn" hidden>Pause</button>
-          <div class="times">
-            <div><div class="t">Début</div><div class="v" id="depotDebutTxt">—</div></div>
-            <div style="text-align:right"><div class="t">Fin</div><div class="v" id="depotFinTxt">—</div></div>
+          <button type="button" class="chrono-btn" id="chronoBtn">Démarrer l'épandage</button>
+          <div class="times3">
+            <div class="trow" id="rowEp"><span class="t">Début épandage</span><span class="v" id="tEpTxt">—</span></div>
+            <div class="trow" id="rowDepD"><span class="t">Début dépotage</span><span class="v" id="tDepDTxt">—</span></div>
+            <div class="trow" id="rowDep"><span class="t">Fin dépotage</span><span class="v" id="tDepTxt">—</span></div>
+            <div class="trow" id="rowCh"><span class="t">Fin chantier</span><span class="v" id="tChTxt">—</span></div>
           </div>
-          <div class="duree" id="depotDureeTxt"></div>
+          <div class="duree" id="dureeTxt"></div>
         </div>
         <div class="nav">
           <button type="button" class="back" data-back>Retour</button>
@@ -360,29 +314,24 @@
         </div>
       </div>
 
-      <!-- ===== Étape 4 : Signatures & validation ===== -->
+      <!-- ===== Étape 4 : Bon + signature chauffeur ===== -->
       <div class="step" data-step="3">
-        <div class="step-head">
-          <h2>Signatures &amp; validation</h2>
-          <p>Observations, photos puis signatures.</p>
+        <div class="step-head"><h2>Bon &amp; signature chauffeur</h2><p>Photo du bon, observations et ta signature.</p></div>
+
+        <div class="block">
+          <div class="block-title">Photo du bon de livraison <span class="req">*</span></div>
+          <label class="photo-btn" for="fileBon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Photographier le bon</span>
+          </label>
+          <input type="file" id="fileBon" accept="image/*" capture="environment">
+          <div class="thumbs" id="bonList"></div>
         </div>
 
         <div class="block">
-          <div class="block-title">Observations</div>
-          <div class="card">
-            <div class="field">
-              <textarea name="observations" placeholder="Remarque éventuelle (incident, accès, météo…)"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="block">
-          <div class="block-title">Photos · option si incident</div>
+          <div class="block-title">Photo incident · si besoin</div>
           <label class="photo-btn" for="fileIncident">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-              <circle cx="12" cy="13" r="4"/>
-            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             <span>Ajouter une photo</span>
           </label>
           <input type="file" id="fileIncident" accept="image/*" capture="environment">
@@ -390,23 +339,55 @@
         </div>
 
         <div class="block">
-          <div class="block-title">Signatures</div>
-          <p class="hint" style="margin:0 4px 12px">L'agriculteur déclare être satisfait de l'épandage.</p>
+          <div class="block-title">Observations</div>
+          <div class="card"><div class="field"><textarea name="observations" placeholder="Remarque éventuelle (incident, accès, météo…)"></textarea></div></div>
+        </div>
 
+        <div class="block">
+          <div class="block-title">Signature chauffeur <span class="req">*</span></div>
           <div class="sigwrap">
-            <div class="sighead"><span>Signature chauffeur <span class="req">*</span></span><button type="button" data-clear="chauffeur">Effacer</button></div>
+            <div class="sighead"><span>Chauffeur</span><button type="button" data-clear="chauffeur">Effacer</button></div>
             <canvas class="sigpad" id="sigChauffeur"></canvas>
           </div>
+        </div>
 
+        <div class="nav">
+          <button type="button" class="back" data-back>Retour</button>
+          <button type="button" class="next" data-next>Continuer</button>
+        </div>
+      </div>
+
+      <!-- ===== Étape 5 : Signature client & envoi ===== -->
+      <div class="step" data-step="4">
+        <div class="step-head"><h2>Signature client &amp; envoi</h2><p>Le client signe et choisit comment recevoir le bon.</p></div>
+
+        <p class="hint" style="margin:0 4px 14px">L'agriculteur déclare être satisfait de l'épandage.</p>
+
+        <div class="signed-ok hidden" id="clientSignedBox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 7"/></svg>
+          Signature client déjà enregistrée (au début)
+          <button type="button" id="redoClient">Refaire</button>
+        </div>
+
+        <div id="clientLiveBox">
+          <div class="sigwrap">
+            <div class="sighead"><span>Signature client</span><button type="button" data-clear="client">Effacer</button></div>
+            <canvas class="sigpad" id="sigClient"></canvas>
+          </div>
           <div class="absent">
             <input type="checkbox" id="clientAbsent">
             <label for="clientAbsent">Client absent (pas de signature)</label>
           </div>
+        </div>
 
-          <div class="sigwrap" id="sigClientWrap">
-            <div class="sighead"><span>Signature client</span><button type="button" data-clear="client">Effacer</button></div>
-            <canvas class="sigpad" id="sigClient"></canvas>
+        <div class="block" style="margin-top:24px">
+          <div class="block-title">Envoyer le bon au client</div>
+          <div class="send-opts">
+            <div class="send-opt active" data-val="">Aucun</div>
+            <div class="send-opt" data-val="Email">Email</div>
+            <div class="send-opt" data-val="SMS">SMS</div>
           </div>
+          <div class="hint" id="envoiHint">Aucun envoi automatique.</div>
         </div>
 
         <div class="nav">
@@ -418,31 +399,43 @@
     </form>
   </div>
 
+  <!-- Overlay : signature client au début -->
+  <div class="overlay" id="clientSigOverlay">
+    <h3>Signature du client</h3>
+    <p class="ov-sub">L'agriculteur déclare être satisfait de l'épandage.</p>
+    <canvas class="sigpad" id="sigClientEarly"></canvas>
+    <div class="nav">
+      <button type="button" class="back" id="cancelEarly">Annuler</button>
+      <button type="button" class="back" id="clearEarly">Effacer</button>
+      <button type="button" class="next" id="validEarly">Valider</button>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
     /* ===== CONFIG (à éditer) ===== */
-    const WEBHOOK_URL = "https://hook.eu1.make.com/eiledr66ms94ayipi5y6dh2hsfulm6xi"; // webhook Make (scénario Alsace Epandage - Bons)
-    const APP_TOKEN   = "AE-bons-2026-7Kx92Q"; // sécurité : doit matcher le filtre Make
+    const WEBHOOK_URL = "https://hook.eu1.make.com/eiledr66ms94ayipi5y6dh2hsfulm6xi"; // webhook Make (scénario Bons)
+    const APP_TOKEN   = "AE-bons-2026-7Kx92Q"; // doit matcher le filtre Make
+    const GET_RDV_URL = ""; // webhook Make "get-rdv" (vide = saisie manuelle pour l'instant)
+    const CHAUFFEURS = ["Damien", "Tristan"];
     const DISTRIBUTEURS = ["MEAC", "LHOIST", "RHÔNE ALPES AMENDEMENT", "GUSTAVE MULLER",
                            "COMPTOIR AGRICOLE", "WALCH", "ARMBRUSTER", "HAURI", "FEUERSTEIN", "CHAYS"];
-    const PRODUITS = ["Calcifertil 54", "Rendu Racine"]; // suggestions (saisie libre possible)
+    const PRODUITS = ["Calcifertil 54", "Rendu Racine"];
     /* ============================= */
 
-    const QUEUE_KEY = "ae_bons_queue";
+    const QUEUE_KEY = "ae_bons_queue", RDV_CACHE = "ae_rdv_cache";
     const form = document.querySelector('#form');
     const submitBtn = document.querySelector('#submitBtn');
     const toast = document.querySelector('#toast');
     const pending = document.querySelector('#pending');
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
-
-    // Splash : on retire l'écran de démarrage une fois l'animation finie
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
     setTimeout(() => { const sp = document.getElementById('splash'); if (sp) sp.remove(); }, 2500);
 
     // Listes
+    const selChauffeur = document.querySelector('#chauffeur');
+    CHAUFFEURS.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; selChauffeur.appendChild(o); });
     const selDist = document.querySelector('#distributeur');
     DISTRIBUTEURS.forEach(d => { const o = document.createElement('option'); o.value = d; o.textContent = d; selDist.appendChild(o); });
     const dlProd = document.querySelector('#produits');
@@ -453,25 +446,80 @@
     function num(v) { const n = parseFloat(String(v || '').replace(',', '.')); return isNaN(n) ? 0 : n; }
     function pad(n) { return String(n).padStart(2, '0'); }
     function hhmm(d) { return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
-    function showToast(msg, type) {
-      toast.textContent = msg;
-      toast.className = 'toast show ' + (type || '');
-      setTimeout(() => { toast.className = 'toast ' + (type || ''); }, 3500);
+    function showToast(msg, type) { toast.textContent = msg; toast.className = 'toast show ' + (type || ''); setTimeout(() => { toast.className = 'toast ' + (type || ''); }, 3500); }
+
+    /* ===== RDV (agenda) ===== */
+    const rdvSelect = document.querySelector('#rdvSelect');
+    let rdvData = [], currentEventId = '';
+    function populateRdv(list) {
+      rdvData = Array.isArray(list) ? list : [];
+      rdvSelect.innerHTML = '<option value="">— Saisie manuelle —</option>';
+      rdvData.forEach((r, i) => { const o = document.createElement('option'); o.value = String(i); o.textContent = (r.heure ? r.heure + ' · ' : '') + (r.client || 'RDV'); rdvSelect.appendChild(o); });
+    }
+    rdvSelect.addEventListener('change', () => {
+      const r = rdvData[+rdvSelect.value]; currentEventId = '';
+      if (!r) return;
+      if (r.client) form.client.value = r.client;
+      if (r.distributeur) selDist.value = r.distributeur;
+      if (r.heure) form.heure_rdv.value = r.heure;
+      if (r.code_postal) form.code_postal.value = r.code_postal;
+      if (r.village) form.village.value = r.village;
+      if (r.tel) form.tel_client.value = r.tel;
+      if (r.email) form.email_client.value = r.email;
+      if (r.parcelles) form.nombre_parcelles.value = r.parcelles;
+      if (r.produit) document.querySelector('#pNom').value = r.produit;
+      currentEventId = r.id || '';
+      showToast('RDV chargé', 'ok');
+    });
+    async function loadRdv() {
+      const cached = localStorage.getItem(RDV_CACHE);
+      if (cached) { try { populateRdv(JSON.parse(cached)); } catch {} }
+      if (!GET_RDV_URL) return; // pas encore branché
+      try {
+        const res = await fetch(GET_RDV_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: APP_TOKEN, date: form.date.value, chauffeur: selChauffeur.value }) });
+        if (!res.ok) throw new Error();
+        const list = await res.json();
+        localStorage.setItem(RDV_CACHE, JSON.stringify(list));
+        populateRdv(list);
+      } catch {}
+    }
+    selChauffeur.addEventListener('change', loadRdv);
+
+    /* ===== Produit + hectares (saisie manuelle + calcul auto optionnel) ===== */
+    const pNom = document.querySelector('#pNom');
+    const pTonnageBL = document.querySelector('#pTonnageBL');
+    const pTonnageReel = document.querySelector('#pTonnageReel');
+    const pDose = document.querySelector('#pDose');
+    const nbHa = document.querySelector('#nbHa');
+    const calcHa = document.querySelector('#calcHa');
+    const haBlock = document.querySelector('#haBlock');
+    function autoHa() { if (!calcHa.checked) return; const t = num(pTonnageReel.value), d = num(pDose.value); if (t > 0 && d > 0) nbHa.value = (t / d).toFixed(2).replace('.', ','); }
+    calcHa.addEventListener('change', () => { haBlock.classList.toggle('hidden', !calcHa.checked); autoHa(); });
+    pTonnageReel.addEventListener('input', autoHa);
+    pDose.addEventListener('input', autoHa);
+
+    function collectProduit() {
+      const tBL = num(pTonnageBL.value), tR = num(pTonnageReel.value), d = num(pDose.value), ha = num(nbHa.value);
+      return [{ produit: pNom.value.trim(), tonnage_bl: tBL || '', tonnage: tR || '', dose_ha: calcHa.checked ? (d || '') : '', nombre_ha: ha || '' }];
     }
 
-    /* ===== Navigation par étapes (stepper) ===== */
+    /* ===== Navigation par étapes ===== */
     const steps = [...document.querySelectorAll('.step')];
     const snodes = [...document.querySelectorAll('.snode')];
     const sbars = [...document.querySelectorAll('.sbar')];
     let current = 0;
-
     function validateStep(i) {
       if (i === 0) {
-        if (!selDist.value) { showToast('Choisis le distributeur', 'err'); return false; }
+        if (!selChauffeur.value) { showToast('Choisis le chauffeur', 'err'); return false; }
         if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); return false; }
+        if (!selDist.value) { showToast('Choisis le distributeur', 'err'); return false; }
       } else if (i === 1) {
-        const p = collectProduits();
-        if (!p.length || !p.some(x => x.produit && x.tonnage)) { showToast('Ajoute au moins un produit (nom + tonnage)', 'err'); return false; }
+        if (!pNom.value.trim()) { showToast('Renseigne le produit', 'err'); return false; }
+        if (!num(pTonnageBL.value)) { showToast('Indique le tonnage du BL camion', 'err'); return false; }
+        if (!num(pTonnageReel.value)) { showToast('Indique le tonnage réel', 'err'); return false; }
+      } else if (i === 3) {
+        if (!bonPhotos.length) { showToast('Photo du bon de livraison obligatoire', 'err'); return false; }
+        if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); return false; }
       }
       return true;
     }
@@ -480,170 +528,77 @@
       steps.forEach((s, idx) => s.classList.toggle('active', idx === i));
       snodes.forEach((n, idx) => { n.classList.toggle('active', idx === i); n.classList.toggle('done', idx < i); });
       sbars.forEach((b, idx) => b.classList.toggle('fill', idx < i));
-      document.querySelector('#stepBadge').textContent = (i + 1) + ' / 4';
+      document.querySelector('#stepBadge').textContent = (i + 1) + ' / 5';
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      if (i === 3) { sigChauffeur.resize(); sigClient.resize(); }
+      if (i === 3) sigChauffeur.resize();
+      if (i === 4) { sigClient.resize(); updateEnvoiHint(); }
     }
-    document.querySelectorAll('[data-next]').forEach(btn => {
-      btn.addEventListener('click', () => { if (validateStep(current)) goTo(current + 1); });
-    });
-    document.querySelectorAll('[data-back]').forEach(btn => {
-      btn.addEventListener('click', () => goTo(Math.max(0, current - 1)));
-    });
-    // Permet de revenir à une étape déjà validée en tapant sur sa pastille
-    snodes.forEach((node, idx) => {
-      node.addEventListener('click', () => { if (idx < current) goTo(idx); });
-    });
+    document.querySelectorAll('[data-next]').forEach(btn => btn.addEventListener('click', () => { if (validateStep(current)) goTo(current + 1); }));
+    document.querySelectorAll('[data-back]').forEach(btn => btn.addEventListener('click', () => goTo(Math.max(0, current - 1))));
+    snodes.forEach((node, idx) => node.addEventListener('click', () => { if (idx < current) goTo(idx); }));
 
-    /* ===== Dépotage (chrono avec pause) ===== */
+    /* ===== Épandage : 3 horodatages ===== */
     const chronoBtn = document.querySelector('#chronoBtn');
-    const pauseBtn = document.querySelector('#pauseBtn');
     const chronoLive = document.querySelector('#chronoLive');
     const chronoTime = document.querySelector('#chronoTime');
     const chronoState = document.querySelector('#chronoState');
-    let depotState = 'idle';                    // idle | running | paused | done
-    let depotDebut = null, depotFin = null;
-    let activeMs = 0, segStart = null;          // temps de dépotage actif (hors pauses)
-    let pauseMs = 0, pauseStart = null, pauseCount = 0;
-    let tick = null;
-
-    function netMs() { return activeMs + (segStart ? Date.now() - segStart : 0); }
-    function totalPauseMs() { return pauseMs + (pauseStart ? Date.now() - pauseStart : 0); }
-    function clock(ms) {
-      const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-      return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`;
-    }
-    function dureeStrMs(ms) {
-      const min = Math.max(0, Math.round(ms / 60000));
-      return min >= 60 ? `${Math.floor(min / 60)}h${pad(min % 60)}` : `${min} min`;
-    }
-    function startTick() { stopTick(); tick = setInterval(() => { chronoTime.textContent = clock(netMs()); }, 1000); }
+    let epState = 'idle', epDebut = null, depDebut = null, depFin = null, chFin = null, tick = null;
+    function clock(ms) { const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60; return h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${pad(m)}:${pad(sec)}`; }
+    function dureeStrMs(ms) { const min = Math.max(0, Math.round(ms / 60000)); return min >= 60 ? `${Math.floor(min / 60)}h${pad(min % 60)}` : `${min} min`; }
+    function startTick() { stopTick(); tick = setInterval(() => { chronoTime.textContent = clock(Date.now() - epDebut.getTime()); }, 1000); }
     function stopTick() { if (tick) { clearInterval(tick); tick = null; } }
-    function setDepotState(s) {
-      depotState = s;
-      chronoLive.classList.toggle('running', s === 'running');
-      chronoLive.classList.toggle('paused', s === 'paused');
-      chronoBtn.classList.toggle('danger', s === 'running' || s === 'paused');
+    function setEpState(s) {
+      epState = s;
+      chronoLive.classList.toggle('running', s === 'running' || s === 'depoting' || s === 'depotdone');
       chronoBtn.classList.toggle('done', s === 'done');
       chronoBtn.disabled = (s === 'done');
-      if (s === 'idle') {
-        chronoBtn.textContent = 'Démarrer le dépotage';
-        pauseBtn.hidden = true; pauseBtn.classList.remove('resumed');
-        chronoState.textContent = 'Prêt à démarrer';
-      } else if (s === 'running') {
-        chronoBtn.textContent = 'Terminer le dépotage';
-        pauseBtn.hidden = false; pauseBtn.textContent = 'Pause'; pauseBtn.classList.remove('resumed');
-        chronoState.textContent = pauseCount ? `En cours · ${pauseCount} pause(s)` : 'En cours';
-      } else if (s === 'paused') {
-        chronoBtn.textContent = 'Terminer le dépotage';
-        pauseBtn.hidden = false; pauseBtn.textContent = 'Reprendre'; pauseBtn.classList.add('resumed');
-        chronoState.textContent = `En pause · ${pauseCount} pause(s)`;
-      } else if (s === 'done') {
-        chronoBtn.textContent = 'Dépotage terminé';
-        pauseBtn.hidden = true; pauseBtn.classList.remove('resumed');
-        chronoState.textContent = 'Terminé';
-      }
+      if (s === 'idle') { chronoBtn.textContent = "Démarrer l'épandage"; chronoState.textContent = 'Prêt à démarrer'; }
+      else if (s === 'running') { chronoBtn.textContent = 'Marquer le début du dépotage'; chronoState.textContent = 'Épandage en cours'; }
+      else if (s === 'depoting') { chronoBtn.textContent = 'Marquer la fin du dépotage'; chronoState.textContent = 'Dépotage en cours'; }
+      else if (s === 'depotdone') { chronoBtn.textContent = 'Marquer la fin du chantier'; chronoState.textContent = 'Dépotage terminé'; }
+      else if (s === 'done') { chronoBtn.textContent = 'Chantier terminé'; chronoState.textContent = 'Terminé'; }
     }
     chronoBtn.addEventListener('click', () => {
-      if (depotState === 'idle') {
-        depotDebut = new Date(); segStart = Date.now();
-        document.querySelector('#depotDebutTxt').textContent = hhmm(depotDebut);
-        setDepotState('running'); startTick();
-      } else if (depotState === 'running' || depotState === 'paused') {
-        if (segStart) { activeMs += Date.now() - segStart; segStart = null; }
-        if (pauseStart) { pauseMs += Date.now() - pauseStart; pauseStart = null; }
-        depotFin = new Date(); stopTick();
-        chronoTime.textContent = clock(activeMs);
-        document.querySelector('#depotFinTxt').textContent = hhmm(depotFin);
-        let txt = 'Durée nette : ' + dureeStrMs(activeMs);
-        if (pauseCount) txt += ` · ${pauseCount} pause(s) (${dureeStrMs(pauseMs)})`;
-        document.querySelector('#depotDureeTxt').textContent = txt;
-        setDepotState('done');
-      }
-    });
-    pauseBtn.addEventListener('click', () => {
-      if (depotState === 'running') {
-        if (segStart) { activeMs += Date.now() - segStart; segStart = null; }
-        pauseStart = Date.now(); pauseCount++;
-        chronoTime.textContent = clock(activeMs);
-        setDepotState('paused'); stopTick();
-      } else if (depotState === 'paused') {
-        if (pauseStart) { pauseMs += Date.now() - pauseStart; pauseStart = null; }
-        segStart = Date.now(); setDepotState('running'); startTick();
+      if (epState === 'idle') {
+        epDebut = new Date(); document.querySelector('#tEpTxt').textContent = hhmm(epDebut); document.querySelector('#rowEp').classList.add('on');
+        setEpState('running'); startTick();
+      } else if (epState === 'running') {
+        depDebut = new Date(); document.querySelector('#tDepDTxt').textContent = hhmm(depDebut); document.querySelector('#rowDepD').classList.add('on');
+        setEpState('depoting');
+      } else if (epState === 'depoting') {
+        depFin = new Date(); document.querySelector('#tDepTxt').textContent = hhmm(depFin); document.querySelector('#rowDep').classList.add('on');
+        setEpState('depotdone');
+      } else if (epState === 'depotdone') {
+        chFin = new Date(); stopTick(); document.querySelector('#tChTxt').textContent = hhmm(chFin); document.querySelector('#rowCh').classList.add('on');
+        chronoTime.textContent = clock(chFin.getTime() - epDebut.getTime());
+        document.querySelector('#dureeTxt').textContent = `Durée totale : ${dureeStrMs(chFin - epDebut)} · Dépotage : ${dureeStrMs(depFin - depDebut)}`;
+        setEpState('done');
       }
     });
 
-    /* ===== Produits (multi-lignes) ===== */
-    const products = document.querySelector('#products');
-    function renumber() {
-      [...products.children].forEach((card, i) => {
-        card.querySelector('.pnum').textContent = 'Produit ' + (i + 1);
-        card.querySelector('.remove').style.display = products.children.length > 1 ? '' : 'none';
-      });
-    }
-    function addProduct() {
-      const card = document.createElement('div');
-      card.className = 'product';
-      card.innerHTML = `
-        <div class="pnum">Produit</div>
-        <button type="button" class="remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Retirer</button>
-        <div class="field">
-          <label>Produit</label>
-          <input type="text" class="p-nom" list="produits" placeholder="ex: Calcifertil 54">
-        </div>
-        <div class="row">
-          <div class="field"><label>Tonnage (T)</label><input type="text" class="p-tonnage" inputmode="decimal" placeholder="ex: 30,460"></div>
-          <div class="field"><label>Dose/ha (T/ha)</label><input type="text" class="p-dose" inputmode="decimal" placeholder="ex: 1,2"></div>
-        </div>
-        <div class="nbha">Nombre d'ha : <strong>—</strong></div>`;
-      const tonnage = card.querySelector('.p-tonnage');
-      const dose = card.querySelector('.p-dose');
-      const nbha = card.querySelector('.nbha strong');
-      function calc() {
-        const t = num(tonnage.value), d = num(dose.value);
-        nbha.textContent = (t > 0 && d > 0) ? (t / d).toFixed(2).replace('.', ',') + ' ha' : '—';
-      }
-      tonnage.addEventListener('input', calc);
-      dose.addEventListener('input', calc);
-      card.querySelector('.remove').addEventListener('click', () => { card.remove(); renumber(); });
-      products.appendChild(card);
-      renumber();
-    }
-    document.querySelector('#addProduct').addEventListener('click', addProduct);
-    addProduct(); // au moins un produit
-
-    /* ===== Photos incident ===== */
-    const incidentPhotos = [];
-    const incidentList = document.querySelector('#incidentList');
-    function renderThumbs() {
-      incidentList.innerHTML = '';
-      incidentPhotos.forEach((src, i) => {
-        const t = document.createElement('div');
-        t.className = 'thumb';
-        t.innerHTML = `<img src="${src}"><button type="button">×</button>`;
-        t.querySelector('button').addEventListener('click', () => { incidentPhotos.splice(i, 1); renderThumbs(); });
-        incidentList.appendChild(t);
-      });
-    }
-    document.querySelector('#fileIncident').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+    /* ===== Photos ===== */
+    function compressTo(file, cb) {
       const reader = new FileReader();
-      reader.onload = (ev) => {
-        const img = new Image();
-        img.onload = () => {
-          const maxW = 1600, scale = Math.min(1, maxW / img.width);
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width * scale; canvas.height = img.height * scale;
-          canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-          incidentPhotos.push(canvas.toDataURL('image/jpeg', 0.85));
-          renderThumbs();
-        };
-        img.src = ev.target.result;
-      };
+      reader.onload = (ev) => { const img = new Image(); img.onload = () => {
+        const maxW = 1600, scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement('canvas'); canvas.width = img.width * scale; canvas.height = img.height * scale;
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        cb(canvas.toDataURL('image/jpeg', 0.85));
+      }; img.src = ev.target.result; };
       reader.readAsDataURL(file);
-      e.target.value = '';
-    });
+    }
+    function wirePhotos(inputId, listId, store) {
+      const list = document.querySelector(listId);
+      function render() {
+        list.innerHTML = '';
+        store.forEach((src, i) => { const t = document.createElement('div'); t.className = 'thumb'; t.innerHTML = `<img src="${src}"><button type="button">×</button>`; t.querySelector('button').addEventListener('click', () => { store.splice(i, 1); render(); }); list.appendChild(t); });
+      }
+      document.querySelector(inputId).addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; compressTo(file, (d) => { store.push(d); render(); }); e.target.value = ''; });
+      return render;
+    }
+    const bonPhotos = [], incidentPhotos = [];
+    const renderBon = wirePhotos('#fileBon', '#bonList', bonPhotos);
+    const renderIncident = wirePhotos('#fileIncident', '#incidentList', incidentPhotos);
 
     /* ===== Signatures ===== */
     function initSignature(canvas) {
@@ -652,65 +607,72 @@
       function setup() {
         const ratio = window.devicePixelRatio || 1;
         const rect = canvas.getBoundingClientRect();
-        if (!rect.width) return; // pas encore visible
-        canvas.width = rect.width * ratio;
-        canvas.height = rect.height * ratio;
+        if (rect.width < 50) return;
+        canvas.width = rect.width * ratio; canvas.height = rect.height * ratio;
         ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-        ctx.strokeStyle = '#15161a';
+        ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#15161a';
         didSetup = true;
       }
       function pos(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
-      canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); drawing = true; last = pos(e); });
-      canvas.addEventListener('pointermove', (e) => {
-        if (!drawing) return; e.preventDefault();
-        const p = pos(e);
-        ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke();
-        last = p; hasInk = true;
-      });
+      canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); if (!didSetup) setup(); drawing = true; last = pos(e); });
+      canvas.addEventListener('pointermove', (e) => { if (!drawing) return; e.preventDefault(); const p = pos(e); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p; hasInk = true; });
       const stop = () => { drawing = false; };
-      canvas.addEventListener('pointerup', stop);
-      canvas.addEventListener('pointerleave', stop);
-      canvas.addEventListener('pointercancel', stop);
-      return {
-        isEmpty: () => !hasInk,
-        clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; },
-        dataUrl: () => canvas.toDataURL('image/png'),
-        resize: () => { if (!didSetup) setup(); }   // initialise au 1er affichage de l'étape
-      };
+      canvas.addEventListener('pointerup', stop); canvas.addEventListener('pointerleave', stop); canvas.addEventListener('pointercancel', stop);
+      return { isEmpty: () => !hasInk, clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; }, dataUrl: () => canvas.toDataURL('image/png'), resize: () => { if (!didSetup) requestAnimationFrame(setup); } };
     }
     const sigChauffeur = initSignature(document.querySelector('#sigChauffeur'));
     const sigClient = initSignature(document.querySelector('#sigClient'));
-    document.querySelectorAll('[data-clear]').forEach(btn => {
-      btn.addEventListener('click', () => (btn.dataset.clear === 'chauffeur' ? sigChauffeur : sigClient).clear());
-    });
+    const sigClientEarly = initSignature(document.querySelector('#sigClientEarly'));
+    document.querySelectorAll('[data-clear]').forEach(btn => btn.addEventListener('click', () => (btn.dataset.clear === 'chauffeur' ? sigChauffeur : sigClient).clear()));
 
+    /* ===== Signature client : au début (overlay) ou à la fin ===== */
+    let clientSigData = null;
+    const overlay = document.querySelector('#clientSigOverlay');
+    const clientSignedBox = document.querySelector('#clientSignedBox');
+    const clientLiveBox = document.querySelector('#clientLiveBox');
     const clientAbsent = document.querySelector('#clientAbsent');
-    const sigClientWrap = document.querySelector('#sigClientWrap');
+    function updateClientStep() {
+      const early = !!clientSigData;
+      clientSignedBox.classList.toggle('hidden', !early);
+      clientLiveBox.classList.toggle('hidden', early);
+    }
+    document.querySelector('#signClientEarly').addEventListener('click', () => { overlay.classList.add('show'); requestAnimationFrame(() => sigClientEarly.resize()); });
+    document.querySelector('#cancelEarly').addEventListener('click', () => overlay.classList.remove('show'));
+    document.querySelector('#clearEarly').addEventListener('click', () => sigClientEarly.clear());
+    document.querySelector('#validEarly').addEventListener('click', () => {
+      if (sigClientEarly.isEmpty()) { showToast('Le client doit signer', 'err'); return; }
+      clientSigData = sigClientEarly.dataUrl();
+      overlay.classList.remove('show'); updateClientStep();
+      showToast('✅ Signature client enregistrée', 'ok');
+    });
+    document.querySelector('#redoClient').addEventListener('click', () => { clientSigData = null; sigClientEarly.clear(); updateClientStep(); });
+
     clientAbsent.addEventListener('change', () => {
-      sigClientWrap.classList.toggle('hidden', clientAbsent.checked);
+      document.querySelector('#sigClient').closest('.sigwrap').classList.toggle('hidden', clientAbsent.checked);
       if (clientAbsent.checked) sigClient.clear();
     });
+
+    /* ===== Envoi (Email / SMS / Aucun) ===== */
+    let moyenEnvoi = '';
+    function updateEnvoiHint() {
+      const h = document.querySelector('#envoiHint');
+      if (moyenEnvoi === 'Email') { const e = form.email_client.value.trim(); h.textContent = e ? '→ Bon envoyé à ' + e : '⚠ Renseigne l\'email client (étape 1)'; }
+      else if (moyenEnvoi === 'SMS') { const t = form.tel_client.value.trim(); h.textContent = t ? '→ Bon envoyé au ' + t : '⚠ Renseigne le téléphone client (étape 1)'; }
+      else h.textContent = 'Aucun envoi automatique.';
+    }
+    document.querySelectorAll('.send-opt').forEach(opt => opt.addEventListener('click', () => {
+      moyenEnvoi = opt.dataset.val;
+      document.querySelectorAll('.send-opt').forEach(o => o.classList.toggle('active', o === opt));
+      updateEnvoiHint();
+    }));
 
     /* ===== File d'attente hors-ligne ===== */
     function getQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch { return []; } }
     function setQueue(q) { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); updateBadge(); }
-    function updateBadge() {
-      const n = getQueue().length;
-      pending.textContent = n ? `⏳ ${n} bon(s) en attente de réseau — envoi automatique dès que possible` : '';
-      pending.classList.toggle('show', n > 0);
-    }
-    async function send(payload) {
-      const res = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-    }
+    function updateBadge() { const n = getQueue().length; pending.textContent = n ? `⏳ ${n} bon(s) en attente de réseau — envoi automatique dès que possible` : ''; pending.classList.toggle('show', n > 0); }
+    async function send(payload) { const res = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!res.ok) throw new Error('HTTP ' + res.status); }
     async function flushQueue() {
-      let q = getQueue();
-      if (!q.length) return;
+      let q = getQueue(); if (!q.length) return;
       const remaining = [];
       for (const item of q) { try { await send(item); } catch { remaining.push(item); } }
       setQueue(remaining);
@@ -718,84 +680,81 @@
     }
     window.addEventListener('online', flushQueue);
 
-    function collectProduits() {
-      return [...products.children].map(card => {
-        const t = num(card.querySelector('.p-tonnage').value);
-        const d = num(card.querySelector('.p-dose').value);
-        return {
-          produit: card.querySelector('.p-nom').value.trim(),
-          tonnage: t || '',
-          dose_ha: d || '',
-          nombre_ha: (t > 0 && d > 0) ? +(t / d).toFixed(2) : ''
-        };
-      }).filter(p => p.produit || p.tonnage);
-    }
-
     function resetForm() {
       form.reset();
       form.date.value = new Date().toISOString().slice(0, 10);
-      products.innerHTML = ''; addProduct();
-      incidentPhotos.length = 0; renderThumbs();
-      sigChauffeur.clear(); sigClient.clear();
-      clientAbsent.checked = false; sigClientWrap.classList.remove('hidden');
-      stopTick();
-      depotDebut = null; depotFin = null; segStart = null; pauseStart = null;
-      activeMs = 0; pauseMs = 0; pauseCount = 0;
-      document.querySelector('#depotDebutTxt').textContent = '—';
-      document.querySelector('#depotFinTxt').textContent = '—';
-      document.querySelector('#depotDureeTxt').textContent = '';
-      chronoTime.textContent = '00:00';
-      setDepotState('idle');
+      calcHa.checked = false; haBlock.classList.add('hidden');
+      bonPhotos.length = 0; renderBon(); incidentPhotos.length = 0; renderIncident();
+      sigChauffeur.clear(); sigClient.clear(); sigClientEarly.clear();
+      clientSigData = null; updateClientStep();
+      clientAbsent.checked = false; document.querySelector('#sigClient').closest('.sigwrap').classList.remove('hidden');
+      moyenEnvoi = ''; document.querySelectorAll('.send-opt').forEach(o => o.classList.toggle('active', o.dataset.val === ''));
+      rdvSelect.value = ''; currentEventId = '';
+      stopTick(); epDebut = null; depDebut = null; depFin = null; chFin = null;
+      document.querySelector('#tEpTxt').textContent = '—'; document.querySelector('#tDepDTxt').textContent = '—'; document.querySelector('#tDepTxt').textContent = '—'; document.querySelector('#tChTxt').textContent = '—';
+      document.querySelector('#dureeTxt').textContent = '';
+      ['rowEp', 'rowDepD', 'rowDep', 'rowCh'].forEach(id => document.querySelector('#' + id).classList.remove('on'));
+      chronoTime.textContent = '00:00'; setEpState('idle');
       goTo(0);
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const produits = collectProduits();
+      const produits = collectProduit();
+      const clientSig = clientSigData ? clientSigData : (clientAbsent.checked ? '' : (sigClient.isEmpty() ? '' : sigClient.dataUrl()));
 
-      if (!selDist.value) { showToast('Choisis le distributeur', 'err'); goTo(0); return; }
+      if (!selChauffeur.value) { showToast('Choisis le chauffeur', 'err'); goTo(0); return; }
       if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); goTo(0); return; }
-      if (!produits.length || !produits.some(p => p.produit && p.tonnage)) { showToast('Ajoute au moins un produit (nom + tonnage)', 'err'); goTo(1); return; }
-      if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); return; }
-      if (!clientAbsent.checked && sigClient.isEmpty()) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); return; }
+      if (!selDist.value) { showToast('Choisis le distributeur', 'err'); goTo(0); return; }
+      if (!produits[0].produit || !produits[0].tonnage) { showToast('Produit / tonnage réel manquant', 'err'); goTo(1); return; }
+      if (!bonPhotos.length) { showToast('Photo du bon de livraison obligatoire', 'err'); goTo(3); return; }
+      if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); goTo(3); return; }
+      if (!clientSig && !clientAbsent.checked) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); goTo(4); return; }
+      if (moyenEnvoi === 'Email' && !form.email_client.value.trim()) { showToast('Email client manquant', 'err'); goTo(0); return; }
+      if (moyenEnvoi === 'SMS' && !form.tel_client.value.trim()) { showToast('Téléphone client manquant', 'err'); goTo(0); return; }
 
       const _d = new Date();
       const data = {
         token: APP_TOKEN,
+        chauffeur: selChauffeur.value,
         date: form.date.value,
+        heure_rdv: form.heure_rdv.value.trim(),
+        event_id: currentEventId,
         distributeur: selDist.value,
         client: form.client.value.trim(),
+        tel_client: form.tel_client.value.trim(),
+        email_client: form.email_client.value.trim(),
+        code_postal: form.code_postal.value.trim(),
+        village: form.village.value.trim(),
         nombre_parcelles: form.nombre_parcelles.value || '',
-        depotage_debut: depotDebut ? hhmm(depotDebut) : '',
-        depotage_fin: depotFin ? hhmm(depotFin) : '',
-        depotage_duree: depotDebut ? dureeStrMs(netMs()) : '',
-        depotage_nb_pauses: pauseCount,
-        depotage_pause_totale: pauseCount ? dureeStrMs(totalPauseMs()) : '',
+        nb_ha: num(nbHa.value) || '',
+        epandage_debut: epDebut ? hhmm(epDebut) : '',
+        depotage_debut: depDebut ? hhmm(depDebut) : '',
+        depotage_fin: depFin ? hhmm(depFin) : '',
+        chantier_fin: chFin ? hhmm(chFin) : '',
+        duree_totale: (epDebut && chFin) ? dureeStrMs(chFin - epDebut) : '',
+        duree_depotage: (depDebut && depFin) ? dureeStrMs(depFin - depDebut) : '',
         observations: form.observations.value.trim(),
+        moyen_envoi: moyenEnvoi || 'Aucun',
         client_present: clientAbsent.checked ? 'Non' : 'Oui',
+        client_signe_au_debut: clientSigData ? 'Oui' : 'Non',
         produits: produits,
-        signature_chauffeur: sigChauffeur.dataUrl().split(',')[1],
-        signature_client: clientAbsent.checked ? '' : sigClient.dataUrl().split(',')[1],
+        photos_bon: bonPhotos.map(p => p.split(',')[1]),
         photos_incident: incidentPhotos.map(p => p.split(',')[1]),
+        signature_chauffeur: sigChauffeur.dataUrl().split(',')[1],
+        signature_client: clientSig ? clientSig.split(',')[1] : '',
         envoye_le: `${pad(_d.getDate())}/${pad(_d.getMonth() + 1)}/${_d.getFullYear()} ${pad(_d.getHours())}h${pad(_d.getMinutes())}`
       };
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Envoi en cours…';
-      try {
-        await send(data);
-        showToast('✅ Bon enregistré', 'ok');
-      } catch (err) {
-        const q = getQueue(); q.push(data); setQueue(q);
-        showToast('📥 Hors-ligne : enregistré, sera envoyé automatiquement', 'warn');
-      } finally {
-        resetForm();
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Enregistrer le bon';
-      }
+      submitBtn.disabled = true; submitBtn.textContent = 'Envoi en cours…';
+      try { await send(data); showToast('✅ Bon enregistré', 'ok'); }
+      catch (err) { const q = getQueue(); q.push(data); setQueue(q); showToast('📥 Hors-ligne : enregistré, sera envoyé automatiquement', 'warn'); }
+      finally { resetForm(); submitBtn.disabled = false; submitBtn.textContent = 'Enregistrer le bon'; }
     });
 
+    updateClientStep();
     updateBadge();
+    loadRdv();
     flushQueue();
   </script>
 </body>

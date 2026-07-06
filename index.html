@@ -87,6 +87,18 @@
 
     .check { display: flex; align-items: center; gap: 11px; margin-top: 16px; font-size: 13.5px; font-weight: 500; color: var(--text); cursor: pointer; }
     .check input { width: 21px; height: 21px; flex: 0 0 auto; accent-color: var(--primary); }
+    /* toggle stylé */
+    .optbtn { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 13px; cursor: pointer; -webkit-user-select: none; user-select: none; }
+    .optbtn.on { border-color: var(--primary); background: var(--primary-l); }
+    .optbtn .txt { flex: 1; font-size: 13.5px; font-weight: 500; color: var(--text); }
+    .optbtn .sw { position: relative; width: 46px; height: 27px; flex: 0 0 auto; background: var(--border-2); border-radius: 20px; transition: background .2s; }
+    .optbtn .sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 21px; height: 21px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+    .optbtn.on .sw { background: var(--primary); }
+    .optbtn.on .sw::after { transform: translateX(19px); }
+    /* sélecteur d'heure */
+    .timepick { display: flex; align-items: center; gap: 6px; }
+    .timepick select { text-align: center; }
+    .timepick .tsep { font-size: 18px; font-weight: 600; color: var(--muted-d); }
 
     .early-btn { width: 100%; margin-top: 12px; padding: 15px; border: 1px dashed var(--primary); border-radius: 13px; background: var(--primary-l); color: var(--primary-d); font-size: 14.5px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
     .early-btn svg { width: 18px; height: 18px; }
@@ -242,14 +254,21 @@
             <div class="field"><label>Email client</label><input type="email" name="email_client" inputmode="email" placeholder="ex: ferme@mail.fr"></div>
           </div>
           <div class="row">
-            <div class="field"><label>Code postal</label><input type="text" name="code_postal" inputmode="numeric" placeholder="ex: 68580"></div>
-            <div class="field"><label>Village</label><input type="text" name="village" placeholder="ex: Friesen"></div>
+            <div class="field"><label>Code postal <span class="req">*</span></label><input type="text" name="code_postal" inputmode="numeric" placeholder="ex: 68580"></div>
+            <div class="field"><label>Village <span class="req">*</span></label><input type="text" name="village" placeholder="ex: Friesen"></div>
           </div>
           <div class="row">
             <div class="field"><label>Date <span class="req">*</span></label><input type="date" name="date"></div>
-            <div class="field"><label>Heure RDV</label><input type="text" name="heure_rdv" inputmode="numeric" placeholder="ex: 14:30"></div>
+            <div class="field">
+              <label>Heure RDV <span class="req">*</span></label>
+              <div class="timepick">
+                <select id="rdvH" aria-label="Heure"><option value="" disabled selected>h</option></select>
+                <span class="tsep">:</span>
+                <select id="rdvM" aria-label="Minutes"><option value="" disabled selected>min</option></select>
+              </div>
+            </div>
           </div>
-          <div class="field"><label>Nb de parcelles</label><input type="number" name="nombre_parcelles" inputmode="numeric" placeholder="ex: 1"></div>
+          <div class="field"><label>Nb de parcelles <span class="req">*</span></label><input type="number" name="nombre_parcelles" inputmode="numeric" placeholder="ex: 1"></div>
         </div>
 
         <button type="button" class="early-btn" id="signClientEarly">
@@ -275,13 +294,18 @@
           </div>
           <div class="hint">Tonnage indiqué sur le BL du camion (ex. 44 T) vs. tonnage réellement épandu.</div>
           <div class="field" style="margin-top:15px">
-            <label>Nombre d'hectares (ha)</label>
-            <input type="text" name="nb_ha" id="nbHa" inputmode="decimal" placeholder="ex: 35,4 (moyenne si plusieurs parcelles)">
+            <label>Dose/ha (T/ha) <span class="req">*</span></label>
+            <input type="text" name="dose_ha" id="pDose" inputmode="decimal" placeholder="ex: 1,2">
           </div>
-          <label class="check"><input type="checkbox" id="calcHa">Calculer automatiquement (tonnage ÷ dose)</label>
-          <div id="haBlock" class="hidden">
-            <div class="field" style="margin-top:14px"><label>Dose/ha (T/ha)</label><input type="text" id="pDose" inputmode="decimal" placeholder="ex: 1,2"></div>
-            <div class="hint">Le résultat remplit le champ ci-dessus — tu peux toujours le corriger à la main.</div>
+          <label class="optbtn" id="calcHaBtn">
+            <span class="txt">Calculer le nombre d'hectares (tonnage réel ÷ dose)</span>
+            <input type="checkbox" id="calcHa" hidden>
+            <span class="sw"></span>
+          </label>
+          <div class="field hidden" id="haField" style="margin-top:15px">
+            <label>Nombre d'hectares (ha)</label>
+            <input type="text" name="nb_ha" id="nbHa" inputmode="decimal" placeholder="calculé automatiquement">
+            <div class="hint">Calculé (tonnage réel ÷ dose) — corrigeable à la main.</div>
           </div>
         </div>
         <datalist id="produits"></datalist>
@@ -374,10 +398,11 @@
             <div class="sighead"><span>Signature client</span><button type="button" data-clear="client">Effacer</button></div>
             <canvas class="sigpad" id="sigClient"></canvas>
           </div>
-          <div class="absent">
-            <input type="checkbox" id="clientAbsent">
-            <label for="clientAbsent">Client absent (pas de signature)</label>
-          </div>
+          <label class="optbtn" id="clientAbsentBtn">
+            <span class="txt">Client absent (pas de signature)</span>
+            <input type="checkbox" id="clientAbsent" hidden>
+            <span class="sw"></span>
+          </label>
         </div>
 
         <div class="block" style="margin-top:24px">
@@ -440,6 +465,9 @@
     DISTRIBUTEURS.forEach(d => { const o = document.createElement('option'); o.value = d; o.textContent = d; selDist.appendChild(o); });
     const dlProd = document.querySelector('#produits');
     PRODUITS.forEach(p => { const o = document.createElement('option'); o.value = p; dlProd.appendChild(o); });
+    const rdvH = document.querySelector('#rdvH'), rdvM = document.querySelector('#rdvM');
+    for (let h = 0; h < 24; h++) { const o = document.createElement('option'); o.value = pad(h); o.textContent = pad(h); rdvH.appendChild(o); }
+    for (let m = 0; m < 60; m += 5) { const o = document.createElement('option'); o.value = pad(m); o.textContent = pad(m); rdvM.appendChild(o); }
 
     form.date.value = new Date().toISOString().slice(0, 10);
 
@@ -461,7 +489,7 @@
       if (!r) return;
       if (r.client) form.client.value = r.client;
       if (r.distributeur) selDist.value = r.distributeur;
-      if (r.heure) form.heure_rdv.value = r.heure;
+      if (r.heure) { const hp = String(r.heure).split(':'); rdvH.value = pad(+hp[0] || 0); const mm = Math.round((+hp[1] || 0) / 5) * 5; rdvM.value = pad(mm > 55 ? 55 : mm); }
       if (r.code_postal) form.code_postal.value = r.code_postal;
       if (r.village) form.village.value = r.village;
       if (r.tel) form.tel_client.value = r.tel;
@@ -492,15 +520,15 @@
     const pDose = document.querySelector('#pDose');
     const nbHa = document.querySelector('#nbHa');
     const calcHa = document.querySelector('#calcHa');
-    const haBlock = document.querySelector('#haBlock');
+    const calcHaBtn = document.querySelector('#calcHaBtn'), haField = document.querySelector('#haField');
     function autoHa() { if (!calcHa.checked) return; const t = num(pTonnageReel.value), d = num(pDose.value); if (t > 0 && d > 0) nbHa.value = (t / d).toFixed(2).replace('.', ','); }
-    calcHa.addEventListener('change', () => { haBlock.classList.toggle('hidden', !calcHa.checked); autoHa(); });
+    calcHa.addEventListener('change', () => { calcHaBtn.classList.toggle('on', calcHa.checked); haField.classList.toggle('hidden', !calcHa.checked); if (!calcHa.checked) nbHa.value = ''; autoHa(); });
     pTonnageReel.addEventListener('input', autoHa);
     pDose.addEventListener('input', autoHa);
 
     function collectProduit() {
       const tBL = num(pTonnageBL.value), tR = num(pTonnageReel.value), d = num(pDose.value), ha = num(nbHa.value);
-      return [{ produit: pNom.value.trim(), tonnage_bl: tBL || '', tonnage: tR || '', dose_ha: calcHa.checked ? (d || '') : '', nombre_ha: ha || '' }];
+      return [{ produit: pNom.value.trim(), tonnage_bl: tBL || '', tonnage: tR || '', dose_ha: d || '', nombre_ha: ha || '' }];
     }
 
     /* ===== Navigation par étapes ===== */
@@ -513,10 +541,15 @@
         if (!selChauffeur.value) { showToast('Choisis le chauffeur', 'err'); return false; }
         if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); return false; }
         if (!selDist.value) { showToast('Choisis le distributeur', 'err'); return false; }
+        if (!form.code_postal.value.trim()) { showToast('Renseigne le code postal', 'err'); return false; }
+        if (!form.village.value.trim()) { showToast('Renseigne le village', 'err'); return false; }
+        if (!rdvH.value || !rdvM.value) { showToast('Renseigne l\'heure de RDV', 'err'); return false; }
+        if (!form.nombre_parcelles.value) { showToast('Renseigne le nombre de parcelles', 'err'); return false; }
       } else if (i === 1) {
         if (!pNom.value.trim()) { showToast('Renseigne le produit', 'err'); return false; }
         if (!num(pTonnageBL.value)) { showToast('Indique le tonnage du BL camion', 'err'); return false; }
         if (!num(pTonnageReel.value)) { showToast('Indique le tonnage réel', 'err'); return false; }
+        if (!num(pDose.value)) { showToast('Indique la dose/ha', 'err'); return false; }
       } else if (i === 3) {
         if (!bonPhotos.length) { showToast('Photo du bon de livraison obligatoire', 'err'); return false; }
         if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); return false; }
@@ -647,7 +680,9 @@
     });
     document.querySelector('#redoClient').addEventListener('click', () => { clientSigData = null; sigClientEarly.clear(); updateClientStep(); });
 
+    const clientAbsentBtn = document.querySelector('#clientAbsentBtn');
     clientAbsent.addEventListener('change', () => {
+      clientAbsentBtn.classList.toggle('on', clientAbsent.checked);
       document.querySelector('#sigClient').closest('.sigwrap').classList.toggle('hidden', clientAbsent.checked);
       if (clientAbsent.checked) sigClient.clear();
     });
@@ -683,11 +718,11 @@
     function resetForm() {
       form.reset();
       form.date.value = new Date().toISOString().slice(0, 10);
-      calcHa.checked = false; haBlock.classList.add('hidden');
+      calcHa.checked = false; calcHaBtn.classList.remove('on'); haField.classList.add('hidden');
       bonPhotos.length = 0; renderBon(); incidentPhotos.length = 0; renderIncident();
       sigChauffeur.clear(); sigClient.clear(); sigClientEarly.clear();
       clientSigData = null; updateClientStep();
-      clientAbsent.checked = false; document.querySelector('#sigClient').closest('.sigwrap').classList.remove('hidden');
+      clientAbsent.checked = false; clientAbsentBtn.classList.remove('on'); document.querySelector('#sigClient').closest('.sigwrap').classList.remove('hidden');
       moyenEnvoi = ''; document.querySelectorAll('.send-opt').forEach(o => o.classList.toggle('active', o.dataset.val === ''));
       rdvSelect.value = ''; currentEventId = '';
       stopTick(); epDebut = null; depDebut = null; depFin = null; chFin = null;
@@ -706,7 +741,8 @@
       if (!selChauffeur.value) { showToast('Choisis le chauffeur', 'err'); goTo(0); return; }
       if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); goTo(0); return; }
       if (!selDist.value) { showToast('Choisis le distributeur', 'err'); goTo(0); return; }
-      if (!produits[0].produit || !produits[0].tonnage) { showToast('Produit / tonnage réel manquant', 'err'); goTo(1); return; }
+      if (!form.code_postal.value.trim() || !form.village.value.trim() || !rdvH.value || !rdvM.value || !form.nombre_parcelles.value) { showToast('Complète le chantier (CP, village, heure RDV, parcelles)', 'err'); goTo(0); return; }
+      if (!produits[0].produit || !produits[0].tonnage || !produits[0].dose_ha) { showToast('Produit / tonnage / dose manquant', 'err'); goTo(1); return; }
       if (!bonPhotos.length) { showToast('Photo du bon de livraison obligatoire', 'err'); goTo(3); return; }
       if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); goTo(3); return; }
       if (!clientSig && !clientAbsent.checked) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); goTo(4); return; }
@@ -718,7 +754,7 @@
         token: APP_TOKEN,
         chauffeur: selChauffeur.value,
         date: form.date.value,
-        heure_rdv: form.heure_rdv.value.trim(),
+        heure_rdv: (rdvH.value && rdvM.value) ? rdvH.value + ':' + rdvM.value : '',
         event_id: currentEventId,
         distributeur: selDist.value,
         client: form.client.value.trim(),

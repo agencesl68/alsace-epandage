@@ -171,11 +171,21 @@
     .toast.warn { border-left: 3px solid var(--warn); }
 
     /* Overlay signature client au début */
-    .overlay { position: fixed; inset: 0; z-index: 150; background: #fff; display: none; flex-direction: column; padding: 20px 18px calc(18px + env(safe-area-inset-bottom)); }
+    .overlay { position: fixed; inset: 0; z-index: 150; background: rgba(20,32,22,.45); display: none; align-items: center; justify-content: center; padding: 16px calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left)); }
     .overlay.show { display: flex; }
-    .overlay h3 { margin: 0 0 3px; font-size: 18px; font-weight: 600; color: var(--text); }
-    .overlay .ov-sub { margin: 0 0 16px; font-size: 12.5px; color: var(--muted); }
-    .overlay .sigpad { flex: 1; height: auto; min-height: 220px; }
+    .overlay-card { background: #fff; border-radius: 16px; padding: 20px; width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .overlay-card h3 { margin: 0 0 3px; font-size: 18px; font-weight: 600; color: var(--text); }
+    .overlay-card .ov-sub { margin: 0 0 16px; font-size: 12.5px; color: var(--muted); }
+    .overlay-card .nav { margin-top: 16px; }
+    /* Signature client : plein écran quand il faut signer */
+    .overlay { padding: 0; }
+    .overlay-card { border-radius: 0; width: 100%; max-width: 100%; height: 100vh; height: 100dvh; max-height: 100dvh; overflow: hidden;
+      padding: calc(16px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+      display: flex; flex-direction: column; }
+    .overlay-card .sigwrap { flex: 1 1 auto; min-height: 0; margin-bottom: 0; display: flex; flex-direction: column; }
+    .overlay-card .sighead { flex: 0 0 auto; }
+    .overlay-card .sigpad { flex: 1 1 auto; width: 100%; height: 100%; min-height: 0; }
+    .overlay-card .nav { flex: 0 0 auto; }
 
     /* Splash */
     #splash { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; background: #fff; animation: splashOut .55s ease 1.7s forwards; }
@@ -204,18 +214,16 @@
           <div class="brand-name">Alsace Epandage</div>
           <div class="brand-sub">Bon d'épandage</div>
         </div>
-        <div class="step-badge" id="stepBadge">1 / 5</div>
+        <div class="step-badge" id="stepBadge">1 / 4</div>
       </div>
       <div class="stepper" id="stepper">
         <div class="snode active"><div class="dot"><span class="n">1</span></div><div class="lbl">Chantier</div></div>
         <div class="sbar"></div>
         <div class="snode"><div class="dot"><span class="n">2</span></div><div class="lbl">Produit</div></div>
         <div class="sbar"></div>
-        <div class="snode"><div class="dot"><span class="n">3</span></div><div class="lbl">Épandage</div></div>
+        <div class="snode"><div class="dot"><span class="n">3</span></div><div class="lbl">Chauffeur</div></div>
         <div class="sbar"></div>
-        <div class="snode"><div class="dot"><span class="n">4</span></div><div class="lbl">Chauffeur</div></div>
-        <div class="sbar"></div>
-        <div class="snode"><div class="dot"><span class="n">5</span></div><div class="lbl">Client</div></div>
+        <div class="snode"><div class="dot"><span class="n">4</span></div><div class="lbl">Client</div></div>
       </div>
     </div>
     <div class="pending" id="pending"></div>
@@ -224,9 +232,26 @@
   <div class="wrap">
     <form id="form">
 
-      <!-- ===== Étape 1 : Chantier ===== -->
+      <!-- ===== Étape 1 : Chantier (épandage en haut) ===== -->
       <div class="step active" data-step="0">
-        <div class="step-head"><h2>Chantier</h2><p>Chauffeur, RDV, client et lieu.</p></div>
+        <div class="step-head"><h2>Chantier</h2><p>Épandage, chauffeur, client et lieu.</p></div>
+
+        <!-- Épandage : chrono, tout en haut -->
+        <div class="block-title" style="margin-top:2px">Épandage</div>
+        <div class="card">
+          <div class="chrono-live" id="chronoLive">
+            <span id="chronoTime">00:00</span>
+            <span id="chronoState">Prêt à démarrer</span>
+          </div>
+          <button type="button" class="chrono-btn" id="chronoBtn">Démarrer l'épandage</button>
+          <div class="times3">
+            <div class="trow" id="rowEp"><span class="t">Début épandage</span><span class="v" id="tEpTxt">—</span></div>
+            <div class="trow" id="rowDepD"><span class="t">Début dépotage</span><span class="v" id="tDepDTxt">—</span></div>
+            <div class="trow" id="rowDep"><span class="t">Fin dépotage</span><span class="v" id="tDepTxt">—</span></div>
+            <div class="trow" id="rowCh"><span class="t">Fin chantier</span><span class="v" id="tChTxt">—</span></div>
+          </div>
+          <div class="duree" id="dureeTxt"></div>
+        </div>
 
         <div class="card">
           <div class="field">
@@ -315,31 +340,8 @@
         </div>
       </div>
 
-      <!-- ===== Étape 3 : Épandage ===== -->
+      <!-- ===== Étape 2 : Bon + signature chauffeur ===== -->
       <div class="step" data-step="2">
-        <div class="step-head"><h2>Épandage</h2><p>Démarre, puis marque le début et la fin du dépotage, et la fin du chantier.</p></div>
-        <div class="card">
-          <div class="chrono-live" id="chronoLive">
-            <span id="chronoTime">00:00</span>
-            <span id="chronoState">Prêt à démarrer</span>
-          </div>
-          <button type="button" class="chrono-btn" id="chronoBtn">Démarrer l'épandage</button>
-          <div class="times3">
-            <div class="trow" id="rowEp"><span class="t">Début épandage</span><span class="v" id="tEpTxt">—</span></div>
-            <div class="trow" id="rowDepD"><span class="t">Début dépotage</span><span class="v" id="tDepDTxt">—</span></div>
-            <div class="trow" id="rowDep"><span class="t">Fin dépotage</span><span class="v" id="tDepTxt">—</span></div>
-            <div class="trow" id="rowCh"><span class="t">Fin chantier</span><span class="v" id="tChTxt">—</span></div>
-          </div>
-          <div class="duree" id="dureeTxt"></div>
-        </div>
-        <div class="nav">
-          <button type="button" class="back" data-back>Retour</button>
-          <button type="button" class="next" data-next>Continuer</button>
-        </div>
-      </div>
-
-      <!-- ===== Étape 4 : Bon + signature chauffeur ===== -->
-      <div class="step" data-step="3">
         <div class="step-head"><h2>Bon &amp; signature chauffeur</h2><p>Photo du bon, observations et ta signature.</p></div>
 
         <div class="block">
@@ -381,24 +383,24 @@
         </div>
       </div>
 
-      <!-- ===== Étape 5 : Signature client & envoi ===== -->
-      <div class="step" data-step="4">
+      <!-- ===== Étape 3 : Signature client & envoi ===== -->
+      <div class="step" data-step="3">
         <div class="step-head"><h2>Signature client &amp; envoi</h2><p>Le client signe et choisit comment recevoir le bon.</p></div>
 
         <p class="hint" style="margin:0 4px 14px">L'agriculteur déclare être satisfait de l'épandage.</p>
 
         <div class="signed-ok hidden" id="clientSignedBox">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 7"/></svg>
-          Signature client déjà enregistrée (au début)
+          Signature client enregistrée
           <button type="button" id="redoClient">Refaire</button>
         </div>
 
         <div id="clientLiveBox">
-          <div class="sigwrap">
-            <div class="sighead"><span>Signature client</span><button type="button" data-clear="client">Effacer</button></div>
-            <canvas class="sigpad" id="sigClient"></canvas>
-          </div>
-          <label class="optbtn" id="clientAbsentBtn">
+          <button type="button" class="early-btn" id="signClientNow" style="margin-top:0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            Faire signer le client
+          </button>
+          <label class="optbtn" id="clientAbsentBtn" style="margin-top:12px">
             <span class="txt">Client absent (pas de signature)</span>
             <input type="checkbox" id="clientAbsent" hidden>
             <span class="sw"></span>
@@ -426,13 +428,17 @@
 
   <!-- Overlay : signature client au début -->
   <div class="overlay" id="clientSigOverlay">
-    <h3>Signature du client</h3>
-    <p class="ov-sub">L'agriculteur déclare être satisfait de l'épandage.</p>
-    <canvas class="sigpad" id="sigClientEarly"></canvas>
-    <div class="nav">
-      <button type="button" class="back" id="cancelEarly">Annuler</button>
-      <button type="button" class="back" id="clearEarly">Effacer</button>
-      <button type="button" class="next" id="validEarly">Valider</button>
+    <div class="overlay-card">
+      <h3>Signature du client</h3>
+      <p class="ov-sub">L'agriculteur déclare être satisfait de l'épandage.</p>
+      <div class="sigwrap" style="margin-bottom:0">
+        <div class="sighead"><span>Client</span><button type="button" id="clearEarly">Effacer</button></div>
+        <canvas class="sigpad" id="sigClientEarly"></canvas>
+      </div>
+      <div class="nav">
+        <button type="button" class="back" id="cancelEarly">Annuler</button>
+        <button type="button" class="next" id="validEarly">Valider</button>
+      </div>
     </div>
   </div>
 
@@ -442,8 +448,13 @@
     /* ===== CONFIG (à éditer) ===== */
     const WEBHOOK_URL = "https://hook.eu1.make.com/eiledr66ms94ayipi5y6dh2hsfulm6xi"; // webhook Make (scénario Bons)
     const APP_TOKEN   = "AE-bons-2026-7Kx92Q"; // doit matcher le filtre Make
-    const GET_RDV_URL = "https://hook.eu1.make.com/lk62fs6yeqvdqvrjh1g88hmmlxx8a1i1"; // webhook Make "get-rdv" (agenda → Claude → pré-remplissage)
-    const CHAUFFEURS = ["Damien", "Tristan"];
+    // Un webhook "get-rdv" par chauffeur (agenda → Claude → pré-remplissage). Chacun lit son propre agenda.
+    const RDV_URLS = {
+      "Damien":  "https://hook.eu1.make.com/lk62fs6yeqvdqvrjh1g88hmmlxx8a1i1", // AE - get-rdv (original, 6452999)
+      "Tristan": "https://hook.eu1.make.com/32ss0hq9s7emumkfqk7albli13buq2ud", // AE - get-rdv - Tristan (6484904)
+      "Ludovic": "https://hook.eu1.make.com/y6cfxk12th82jbf3a6tp52exjrkymspy"  // AE - get-rdv - Ludovic (6484909)
+    };
+    const CHAUFFEURS = ["Damien", "Tristan", "Ludovic"];
     const DISTRIBUTEURS = ["MEAC", "LHOIST", "RHÔNE ALPES AMENDEMENT", "GUSTAVE MULLER",
                            "COMPTOIR AGRICOLE", "WALCH", "ARMBRUSTER", "HAURI", "FEUERSTEIN", "CHAYS"];
     const PRODUITS = ["Calcifertil 54", "Rendu Racine"];
@@ -500,14 +511,17 @@
       showToast('RDV chargé', 'ok');
     });
     async function loadRdv() {
-      const cached = localStorage.getItem(RDV_CACHE);
+      const url = RDV_URLS[selChauffeur.value];
+      const cacheKey = RDV_CACHE + '_' + (selChauffeur.value || '');
+      const cached = localStorage.getItem(cacheKey);
       if (cached) { try { populateRdv(JSON.parse(cached)); } catch {} }
-      if (!GET_RDV_URL) return; // pas encore branché
+      else populateRdv([]); // pas de cache pour ce chauffeur → repart sur "Saisie manuelle"
+      if (!url) return; // chauffeur sans webhook branché (ou aucun chauffeur choisi)
       try {
-        const res = await fetch(GET_RDV_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: APP_TOKEN, date: form.date.value, chauffeur: selChauffeur.value }) });
+        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: APP_TOKEN, date: form.date.value, chauffeur: selChauffeur.value }) });
         if (!res.ok) throw new Error();
         const list = await res.json();
-        localStorage.setItem(RDV_CACHE, JSON.stringify(list));
+        localStorage.setItem(cacheKey, JSON.stringify(list));
         populateRdv(list);
       } catch {}
     }
@@ -550,7 +564,7 @@
         if (!num(pTonnageBL.value)) { showToast('Indique le tonnage du BL camion', 'err'); return false; }
         if (!num(pTonnageReel.value)) { showToast('Indique le tonnage réel', 'err'); return false; }
         if (!num(pDose.value)) { showToast('Indique la dose/ha', 'err'); return false; }
-      } else if (i === 3) {
+      } else if (i === 2) {
         if (!bonPhotos.length) { showToast('Photo du bon de livraison obligatoire', 'err'); return false; }
         if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); return false; }
       }
@@ -561,10 +575,10 @@
       steps.forEach((s, idx) => s.classList.toggle('active', idx === i));
       snodes.forEach((n, idx) => { n.classList.toggle('active', idx === i); n.classList.toggle('done', idx < i); });
       sbars.forEach((b, idx) => b.classList.toggle('fill', idx < i));
-      document.querySelector('#stepBadge').textContent = (i + 1) + ' / 5';
+      document.querySelector('#stepBadge').textContent = (i + 1) + ' / 4';
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      if (i === 3) sigChauffeur.resize();
-      if (i === 4) { sigClient.resize(); updateEnvoiHint(); }
+      if (i === 2) sigChauffeur.resize();
+      if (i === 3) updateEnvoiHint();
     }
     document.querySelectorAll('[data-next]').forEach(btn => btn.addEventListener('click', () => { if (validateStep(current)) goTo(current + 1); }));
     document.querySelectorAll('[data-back]').forEach(btn => btn.addEventListener('click', () => goTo(Math.max(0, current - 1))));
@@ -654,37 +668,44 @@
       return { isEmpty: () => !hasInk, clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; }, dataUrl: () => canvas.toDataURL('image/png'), resize: () => { if (!didSetup) requestAnimationFrame(setup); } };
     }
     const sigChauffeur = initSignature(document.querySelector('#sigChauffeur'));
-    const sigClient = initSignature(document.querySelector('#sigClient'));
-    const sigClientEarly = initSignature(document.querySelector('#sigClientEarly'));
-    document.querySelectorAll('[data-clear]').forEach(btn => btn.addEventListener('click', () => (btn.dataset.clear === 'chauffeur' ? sigChauffeur : sigClient).clear()));
+    const sigClientEarly = initSignature(document.querySelector('#sigClientEarly')); // pad plein écran = unique signature client
+    document.querySelectorAll('[data-clear]').forEach(btn => btn.addEventListener('click', () => sigChauffeur.clear()));
 
-    /* ===== Signature client : au début (overlay) ou à la fin ===== */
-    let clientSigData = null;
+    /* ===== Signature client : pad plein écran, ouvrable au début OU à la fin ===== */
+    let clientSigData = null, clientSignedEarly = false, signOrigin = 'late';
     const overlay = document.querySelector('#clientSigOverlay');
     const clientSignedBox = document.querySelector('#clientSignedBox');
     const clientLiveBox = document.querySelector('#clientLiveBox');
     const clientAbsent = document.querySelector('#clientAbsent');
+    const signClientNowBtn = document.querySelector('#signClientNow');
     function updateClientStep() {
-      const early = !!clientSigData;
-      clientSignedBox.classList.toggle('hidden', !early);
-      clientLiveBox.classList.toggle('hidden', early);
+      const signed = !!clientSigData;
+      clientSignedBox.classList.toggle('hidden', !signed);
+      clientLiveBox.classList.toggle('hidden', signed);
     }
-    document.querySelector('#signClientEarly').addEventListener('click', () => { overlay.classList.add('show'); requestAnimationFrame(() => sigClientEarly.resize()); });
+    function openClientSign(origin) {
+      signOrigin = origin;
+      overlay.classList.add('show');
+      requestAnimationFrame(() => sigClientEarly.resize());
+    }
+    document.querySelector('#signClientEarly').addEventListener('click', () => openClientSign('early')); // depuis l'étape Chantier
+    signClientNowBtn.addEventListener('click', () => openClientSign('late'));                            // depuis l'étape Client
     document.querySelector('#cancelEarly').addEventListener('click', () => overlay.classList.remove('show'));
     document.querySelector('#clearEarly').addEventListener('click', () => sigClientEarly.clear());
     document.querySelector('#validEarly').addEventListener('click', () => {
       if (sigClientEarly.isEmpty()) { showToast('Le client doit signer', 'err'); return; }
       clientSigData = sigClientEarly.dataUrl();
+      clientSignedEarly = (signOrigin === 'early');
       overlay.classList.remove('show'); updateClientStep();
       showToast('✅ Signature client enregistrée', 'ok');
     });
-    document.querySelector('#redoClient').addEventListener('click', () => { clientSigData = null; sigClientEarly.clear(); updateClientStep(); });
+    document.querySelector('#redoClient').addEventListener('click', () => { clientSigData = null; clientSignedEarly = false; sigClientEarly.clear(); updateClientStep(); });
 
     const clientAbsentBtn = document.querySelector('#clientAbsentBtn');
     clientAbsent.addEventListener('change', () => {
       clientAbsentBtn.classList.toggle('on', clientAbsent.checked);
-      document.querySelector('#sigClient').closest('.sigwrap').classList.toggle('hidden', clientAbsent.checked);
-      if (clientAbsent.checked) sigClient.clear();
+      signClientNowBtn.classList.toggle('hidden', clientAbsent.checked);
+      if (clientAbsent.checked) { clientSigData = null; clientSignedEarly = false; sigClientEarly.clear(); updateClientStep(); }
     });
 
     /* ===== Envoi (Email / SMS / Aucun) ===== */
@@ -720,9 +741,9 @@
       form.date.value = new Date().toISOString().slice(0, 10);
       calcHa.checked = false; calcHaBtn.classList.remove('on'); haField.classList.add('hidden');
       bonPhotos.length = 0; renderBon(); incidentPhotos.length = 0; renderIncident();
-      sigChauffeur.clear(); sigClient.clear(); sigClientEarly.clear();
-      clientSigData = null; updateClientStep();
-      clientAbsent.checked = false; clientAbsentBtn.classList.remove('on'); document.querySelector('#sigClient').closest('.sigwrap').classList.remove('hidden');
+      sigChauffeur.clear(); sigClientEarly.clear();
+      clientSigData = null; clientSignedEarly = false; updateClientStep();
+      clientAbsent.checked = false; clientAbsentBtn.classList.remove('on'); signClientNowBtn.classList.remove('hidden');
       moyenEnvoi = ''; document.querySelectorAll('.send-opt').forEach(o => o.classList.toggle('active', o.dataset.val === ''));
       rdvSelect.value = ''; currentEventId = '';
       stopTick(); epDebut = null; depDebut = null; depFin = null; chFin = null;
@@ -736,16 +757,16 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const produits = collectProduit();
-      const clientSig = clientSigData ? clientSigData : (clientAbsent.checked ? '' : (sigClient.isEmpty() ? '' : sigClient.dataUrl()));
+      const clientSig = clientAbsent.checked ? '' : (clientSigData || '');
 
       if (!selChauffeur.value) { showToast('Choisis le chauffeur', 'err'); goTo(0); return; }
       if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); goTo(0); return; }
       if (!selDist.value) { showToast('Choisis le distributeur', 'err'); goTo(0); return; }
       if (!form.code_postal.value.trim() || !form.village.value.trim() || !rdvH.value || !rdvM.value || !form.nombre_parcelles.value) { showToast('Complète le chantier (CP, village, heure RDV, parcelles)', 'err'); goTo(0); return; }
       if (!produits[0].produit || !produits[0].tonnage || !produits[0].dose_ha) { showToast('Produit / tonnage / dose manquant', 'err'); goTo(1); return; }
-      if (!bonPhotos.length) { showToast('Photo du bon de livraison obligatoire', 'err'); goTo(3); return; }
-      if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); goTo(3); return; }
-      if (!clientSig && !clientAbsent.checked) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); goTo(4); return; }
+      if (!bonPhotos.length) { showToast('Photo du bon de livraison obligatoire', 'err'); goTo(2); return; }
+      if (sigChauffeur.isEmpty()) { showToast('Signature chauffeur manquante', 'err'); goTo(2); return; }
+      if (!clientSig && !clientAbsent.checked) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); goTo(3); return; }
       if (moyenEnvoi === 'Email' && !form.email_client.value.trim()) { showToast('Email client manquant', 'err'); goTo(0); return; }
       if (moyenEnvoi === 'SMS' && !form.tel_client.value.trim()) { showToast('Téléphone client manquant', 'err'); goTo(0); return; }
 
@@ -773,7 +794,7 @@
         observations: form.observations.value.trim(),
         moyen_envoi: moyenEnvoi || 'Aucun',
         client_present: clientAbsent.checked ? 'Non' : 'Oui',
-        client_signe_au_debut: clientSigData ? 'Oui' : 'Non',
+        client_signe_au_debut: clientSignedEarly ? 'Oui' : 'Non',
         produits: produits,
         photos_bon: bonPhotos.map(p => p.split(',')[1]),
         photos_incident: incidentPhotos.map(p => p.split(',')[1]),

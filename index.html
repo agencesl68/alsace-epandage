@@ -657,7 +657,7 @@
         if (rect.width < 50) return;
         canvas.width = rect.width * ratio; canvas.height = rect.height * ratio;
         ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#15161a';
+        ctx.lineWidth = Math.max(2.8, rect.width / 150); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#15161a';
         didSetup = true;
       }
       function pos(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
@@ -665,7 +665,27 @@
       canvas.addEventListener('pointermove', (e) => { if (!drawing) return; e.preventDefault(); const p = pos(e); ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(p.x, p.y); ctx.stroke(); last = p; hasInk = true; });
       const stop = () => { drawing = false; };
       canvas.addEventListener('pointerup', stop); canvas.addEventListener('pointerleave', stop); canvas.addEventListener('pointercancel', stop);
-      return { isEmpty: () => !hasInk, clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; }, dataUrl: () => canvas.toDataURL('image/png'), resize: () => { if (!didSetup) requestAnimationFrame(setup); } };
+      // Exporte la signature rognée autour du tracé et recentrée dans un cadre standard
+      // 600x195 (= proportion de la boîte PDF 200x65) → les 2 signatures sortent à la même taille, centrées, non déformées.
+      function normDataUrl() {
+        const w = canvas.width, h = canvas.height;
+        if (!w || !h) return canvas.toDataURL('image/png');
+        const px = ctx.getImageData(0, 0, w, h).data;
+        let minX = w, minY = h, maxX = 0, maxY = 0, found = false;
+        for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+          if (px[(y * w + x) * 4 + 3] > 12) { found = true; if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+        }
+        if (!found) return canvas.toDataURL('image/png');
+        const sw = maxX - minX + 1, sh = maxY - minY + 1;
+        const OW = 600, OH = 195, pad = 16;
+        const out = document.createElement('canvas'); out.width = OW; out.height = OH;
+        const octx = out.getContext('2d');
+        const scale = Math.min((OW - 2 * pad) / sw, (OH - 2 * pad) / sh);
+        const dw = sw * scale, dh = sh * scale;
+        octx.drawImage(canvas, minX, minY, sw, sh, (OW - dw) / 2, (OH - dh) / 2, dw, dh);
+        return out.toDataURL('image/png');
+      }
+      return { isEmpty: () => !hasInk, clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; }, dataUrl: normDataUrl, resize: () => { if (!didSetup) requestAnimationFrame(setup); } };
     }
     const sigChauffeur = initSignature(document.querySelector('#sigChauffeur'));
     const sigClientEarly = initSignature(document.querySelector('#sigClientEarly')); // pad plein écran = unique signature client

@@ -717,7 +717,7 @@
       clientSigData = sigClientEarly.dataUrl();
       clientSignedEarly = (signOrigin === 'early');
       overlay.classList.remove('show'); updateClientStep();
-      showToast('✅ Signature client enregistrée', 'ok');
+      showToast('Signature client enregistree', 'ok');
     });
     document.querySelector('#redoClient').addEventListener('click', () => { clientSigData = null; clientSignedEarly = false; sigClientEarly.clear(); updateClientStep(); });
 
@@ -732,8 +732,8 @@
     let moyenEnvoi = '';
     function updateEnvoiHint() {
       const h = document.querySelector('#envoiHint');
-      if (moyenEnvoi === 'Email') { const e = form.email_client.value.trim(); h.textContent = e ? '→ Bon envoyé à ' + e : '⚠ Renseigne l\'email client (étape 1)'; }
-      else if (moyenEnvoi === 'SMS') { const t = form.tel_client.value.trim(); h.textContent = t ? '→ Bon envoyé au ' + t : '⚠ Renseigne le téléphone client (étape 1)'; }
+      if (moyenEnvoi === 'Email') { const e = form.email_client.value.trim(); h.textContent = e ? 'Bon envoye a ' + e : 'Renseigne l\'email client (etape 1)'; }
+      else if (moyenEnvoi === 'SMS') { const t = form.tel_client.value.trim(); h.textContent = t ? 'Bon envoye au ' + t : 'Renseigne le telephone client (etape 1)'; }
       else h.textContent = 'Aucun envoi automatique.';
     }
     document.querySelectorAll('.send-opt').forEach(opt => opt.addEventListener('click', () => {
@@ -745,14 +745,14 @@
     /* ===== File d'attente hors-ligne ===== */
     function getQueue() { try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch { return []; } }
     function setQueue(q) { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); updateBadge(); }
-    function updateBadge() { const n = getQueue().length; pending.textContent = n ? `⏳ ${n} bon(s) en attente de réseau — envoi automatique dès que possible` : ''; pending.classList.toggle('show', n > 0); }
+    function updateBadge() { const n = getQueue().length; pending.textContent = n ? `${n} bon(s) en attente de reseau — envoi automatique des que possible` : ''; pending.classList.toggle('show', n > 0); }
     async function send(payload) { const res = await fetch(WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!res.ok) throw new Error('HTTP ' + res.status); }
     async function flushQueue() {
       let q = getQueue(); if (!q.length) return;
       const remaining = [];
       for (const item of q) { try { await send(item); } catch { remaining.push(item); } }
       setQueue(remaining);
-      if (q.length && !remaining.length) showToast(`✅ ${q.length} bon(s) synchronisé(s)`, 'ok');
+      if (q.length && !remaining.length) showToast(`${q.length} bon(s) synchronise(s)`, 'ok');
     }
     window.addEventListener('online', flushQueue);
 
@@ -779,6 +779,7 @@
       const produits = collectProduit();
       const clientSig = clientAbsent.checked ? '' : (clientSigData || '');
 
+      if (epState !== 'done') { showToast('Termine le chantier avant d\'envoyer le bon (fin chantier)', 'err'); goTo(0); return; }
       if (!selChauffeur.value) { showToast('Choisis le chauffeur', 'err'); goTo(0); return; }
       if (!form.client.value.trim()) { showToast('Renseigne le client', 'err'); goTo(0); return; }
       if (!selDist.value) { showToast('Choisis le distributeur', 'err'); goTo(0); return; }
@@ -824,8 +825,8 @@
       };
 
       submitBtn.disabled = true; submitBtn.textContent = 'Envoi en cours…';
-      try { await send(data); showToast('✅ Bon enregistré', 'ok'); }
-      catch (err) { const q = getQueue(); q.push(data); setQueue(q); showToast('📥 Hors-ligne : enregistré, sera envoyé automatiquement', 'warn'); }
+      try { await send(data); showToast('Bon enregistre', 'ok'); }
+      catch (err) { const q = getQueue(); q.push(data); setQueue(q); showToast('Hors-ligne : enregistre, sera envoye automatiquement', 'warn'); }
       finally { resetForm(); submitBtn.disabled = false; submitBtn.textContent = 'Enregistrer le bon'; }
     });
 

@@ -621,6 +621,7 @@
         document.querySelector('#dureeTxt').textContent = `Durée totale : ${dureeStrMs(chFin - epDebut)} · Dépotage : ${dureeStrMs(depFin - depDebut)}`;
         setEpState('done');
       }
+      saveDraft();
     });
 
     /* ===== Photos ===== */
@@ -650,7 +651,7 @@
     /* ===== Signatures ===== */
     function initSignature(canvas) {
       const ctx = canvas.getContext('2d');
-      let drawing = false, hasInk = false, last = null, didSetup = false;
+      let drawing = false, hasInk = false, last = null, didSetup = false, pendingRestore = null;
       function setup() {
         const ratio = window.devicePixelRatio || 1;
         const rect = canvas.getBoundingClientRect();
@@ -659,6 +660,7 @@
         ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
         ctx.lineWidth = Math.max(2.8, rect.width / 150); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#15161a';
         didSetup = true;
+        if (pendingRestore) { const ri = new Image(); ri.onload = () => { ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(ri, 0, 0, canvas.width, canvas.height); ctx.restore(); hasInk = true; pendingRestore = null; }; ri.src = pendingRestore; }
       }
       function pos(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
       canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); if (!didSetup) setup(); drawing = true; last = pos(e); });
@@ -685,7 +687,7 @@
         octx.drawImage(canvas, minX, minY, sw, sh, (OW - dw) / 2, (OH - dh) / 2, dw, dh);
         return out.toDataURL('image/png');
       }
-      return { isEmpty: () => !hasInk, clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; }, dataUrl: normDataUrl, resize: () => { if (!didSetup) requestAnimationFrame(setup); } };
+      return { isEmpty: () => !hasInk, clear: () => { ctx.clearRect(0, 0, canvas.width, canvas.height); hasInk = false; pendingRestore = null; }, dataUrl: normDataUrl, rawDataUrl: () => canvas.toDataURL('image/png'), restore: (src) => { if (didSetup) { const ri = new Image(); ri.onload = () => { ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(ri, 0, 0, canvas.width, canvas.height); ctx.restore(); hasInk = true; }; ri.src = src; } else { pendingRestore = src; hasInk = true; } }, resize: () => { if (!didSetup) requestAnimationFrame(setup); } };
     }
     const sigChauffeur = initSignature(document.querySelector('#sigChauffeur'));
     const sigClientEarly = initSignature(document.querySelector('#sigClientEarly')); // pad plein écran = unique signature client
@@ -771,6 +773,7 @@
       document.querySelector('#dureeTxt').textContent = '';
       ['rowEp', 'rowDepD', 'rowDep', 'rowCh'].forEach(id => document.querySelector('#' + id).classList.remove('on'));
       chronoTime.textContent = '00:00'; setEpState('idle');
+      clearDraft();
       goTo(0);
     }
 
@@ -829,6 +832,76 @@
       catch (err) { const q = getQueue(); q.push(data); setQueue(q); showToast('Hors-ligne : enregistre, sera envoye automatiquement', 'warn'); }
       finally { resetForm(); submitBtn.disabled = false; submitBtn.textContent = 'Enregistrer le bon'; }
     });
+
+    /* ===== Brouillon (persistance entre sessions) ===== */
+    const DRAFT_KEY = 'ae_draft';
+    function saveDraft() {
+      const draft = {
+        step: current, chauffeur: selChauffeur.value, client: form.client.value,
+        distributeur: selDist.value, tel_client: form.tel_client.value,
+        email_client: form.email_client.value, code_postal: form.code_postal.value,
+        village: form.village.value, date: form.date.value, rdvH: rdvH.value, rdvM: rdvM.value,
+        nombre_parcelles: form.nombre_parcelles.value,
+        produit: pNom.value, tonnage_bl: pTonnageBL.value, tonnage_reel: pTonnageReel.value,
+        dose_ha: pDose.value, nb_ha: nbHa.value, calcHaOn: calcHa.checked,
+        observations: form.observations.value, moyenEnvoi: moyenEnvoi,
+        epState: epState,
+        epDebut: epDebut ? epDebut.getTime() : null,
+        depDebut: depDebut ? depDebut.getTime() : null,
+        depFin: depFin ? depFin.getTime() : null,
+        chFin: chFin ? chFin.getTime() : null,
+        bonPhotos: bonPhotos, incidentPhotos: incidentPhotos,
+        clientSigData: clientSigData, clientSignedEarly: clientSignedEarly,
+        clientAbsent: clientAbsent.checked,
+        sigChauffeurRaw: sigChauffeur.isEmpty() ? null : sigChauffeur.rawDataUrl(),
+        eventId: currentEventId
+      };
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch(e) {}
+    }
+    function loadDraft() {
+      let d; try { d = JSON.parse(localStorage.getItem(DRAFT_KEY)); } catch(e) {} if (!d) return;
+      if (d.chauffeur) selChauffeur.value = d.chauffeur;
+      if (d.client) form.client.value = d.client;
+      if (d.distributeur) selDist.value = d.distributeur;
+      if (d.tel_client) form.tel_client.value = d.tel_client;
+      if (d.email_client) form.email_client.value = d.email_client;
+      if (d.code_postal) form.code_postal.value = d.code_postal;
+      if (d.village) form.village.value = d.village;
+      if (d.date) form.date.value = d.date;
+      if (d.rdvH) rdvH.value = d.rdvH;
+      if (d.rdvM) rdvM.value = d.rdvM;
+      if (d.nombre_parcelles) form.nombre_parcelles.value = d.nombre_parcelles;
+      if (d.produit) pNom.value = d.produit;
+      if (d.tonnage_bl) pTonnageBL.value = d.tonnage_bl;
+      if (d.tonnage_reel) pTonnageReel.value = d.tonnage_reel;
+      if (d.dose_ha) pDose.value = d.dose_ha;
+      if (d.nb_ha) nbHa.value = d.nb_ha;
+      if (d.calcHaOn) { calcHa.checked = true; calcHaBtn.classList.add('on'); haField.classList.remove('hidden'); }
+      if (d.observations) form.observations.value = d.observations;
+      if (d.eventId) currentEventId = d.eventId;
+      if (d.moyenEnvoi !== undefined) { moyenEnvoi = d.moyenEnvoi; document.querySelectorAll('.send-opt').forEach(o => o.classList.toggle('active', o.dataset.val === moyenEnvoi)); }
+      if (d.epDebut) { epDebut = new Date(d.epDebut); document.querySelector('#tEpTxt').textContent = hhmm(epDebut); document.querySelector('#rowEp').classList.add('on'); }
+      if (d.depDebut) { depDebut = new Date(d.depDebut); document.querySelector('#tDepDTxt').textContent = hhmm(depDebut); document.querySelector('#rowDepD').classList.add('on'); }
+      if (d.depFin) { depFin = new Date(d.depFin); document.querySelector('#tDepTxt').textContent = hhmm(depFin); document.querySelector('#rowDep').classList.add('on'); }
+      if (d.chFin) { chFin = new Date(d.chFin); document.querySelector('#tChTxt').textContent = hhmm(chFin); document.querySelector('#rowCh').classList.add('on'); }
+      if (d.epState && d.epState !== 'idle') {
+        setEpState(d.epState);
+        if (d.epState === 'done' && epDebut && chFin) {
+          chronoTime.textContent = clock(chFin.getTime() - epDebut.getTime());
+          document.querySelector('#dureeTxt').textContent = 'Durée totale : ' + dureeStrMs(chFin - epDebut) + ' · Dépotage : ' + dureeStrMs(depFin - depDebut);
+        } else if (epDebut) { startTick(); }
+      }
+      if (d.bonPhotos && d.bonPhotos.length) { bonPhotos.push(...d.bonPhotos); renderBon(); }
+      if (d.incidentPhotos && d.incidentPhotos.length) { incidentPhotos.push(...d.incidentPhotos); renderIncident(); }
+      if (d.clientSigData) { clientSigData = d.clientSigData; clientSignedEarly = !!d.clientSignedEarly; updateClientStep(); }
+      if (d.clientAbsent) { clientAbsent.checked = true; clientAbsentBtn.classList.add('on'); signClientNowBtn.classList.add('hidden'); }
+      if (d.sigChauffeurRaw) sigChauffeur.restore(d.sigChauffeurRaw);
+      if (d.step) goTo(d.step);
+    }
+    function clearDraft() { localStorage.removeItem(DRAFT_KEY); }
+    document.addEventListener('visibilitychange', () => { if (document.hidden) saveDraft(); });
+    setInterval(saveDraft, 30000);
+    loadDraft();
 
     updateClientStep();
     updateBadge();

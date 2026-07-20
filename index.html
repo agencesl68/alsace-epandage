@@ -480,10 +480,12 @@
     for (let h = 0; h < 24; h++) { const o = document.createElement('option'); o.value = pad(h); o.textContent = pad(h); rdvH.appendChild(o); }
     for (let m = 0; m < 60; m += 5) { const o = document.createElement('option'); o.value = pad(m); o.textContent = pad(m); rdvM.appendChild(o); }
 
-    form.date.value = new Date().toISOString().slice(0, 10);
-
     function num(v) { const n = parseFloat(String(v || '').replace(',', '.')); return isNaN(n) ? 0 : n; }
     function pad(n) { return String(n).padStart(2, '0'); }
+    // Date du jour en heure LOCALE (toISOString() renvoie l'UTC → donnait la veille entre minuit et 2h)
+    function todayLocal() { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+
+    form.date.value = todayLocal();
     function hhmm(d) { return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
     function showToast(msg, type) { toast.textContent = msg; toast.className = 'toast show ' + (type || ''); setTimeout(() => { toast.className = 'toast ' + (type || ''); }, 3500); }
 
@@ -513,15 +515,17 @@
     async function loadRdv() {
       const url = RDV_URLS[selChauffeur.value];
       const cacheKey = RDV_CACHE + '_' + (selChauffeur.value || '');
+      // Le cache RDV n'est valable que le jour même : pas question d'afficher les RDV de vendredi le lundi.
       const cached = localStorage.getItem(cacheKey);
-      if (cached) { try { populateRdv(JSON.parse(cached)); } catch {} }
-      else populateRdv([]); // pas de cache pour ce chauffeur → repart sur "Saisie manuelle"
+      let cacheOk = false;
+      if (cached) { try { const c = JSON.parse(cached); if (c && c.day === new Date().toDateString() && Array.isArray(c.list)) { populateRdv(c.list); cacheOk = true; } } catch {} }
+      if (!cacheOk) populateRdv([]); // pas de cache du jour pour ce chauffeur → repart sur "Saisie manuelle"
       if (!url) return; // chauffeur sans webhook branché (ou aucun chauffeur choisi)
       try {
         const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: APP_TOKEN, date: form.date.value, chauffeur: selChauffeur.value }) });
         if (!res.ok) throw new Error();
         const list = await res.json();
-        localStorage.setItem(cacheKey, JSON.stringify(list));
+        localStorage.setItem(cacheKey, JSON.stringify({ day: new Date().toDateString(), list: list }));
         populateRdv(list);
       } catch {}
     }
@@ -837,6 +841,7 @@
     const DRAFT_KEY = 'ae_draft';
     function saveDraft() {
       const draft = {
+        savedDay: new Date().toDateString(),
         step: current, chauffeur: selChauffeur.value, client: form.client.value,
         distributeur: selDist.value, tel_client: form.tel_client.value,
         email_client: form.email_client.value, code_postal: form.code_postal.value,
@@ -860,6 +865,8 @@
     }
     function loadDraft() {
       let d; try { d = JSON.parse(localStorage.getItem(DRAFT_KEY)); } catch(e) {} if (!d) return;
+      // Brouillon d'un autre jour = obsolète : on repart à zéro (date du jour, chrono vierge)
+      if (d.savedDay !== new Date().toDateString()) { clearDraft(); return; }
       if (d.chauffeur) selChauffeur.value = d.chauffeur;
       if (d.client) form.client.value = d.client;
       if (d.distributeur) selDist.value = d.distributeur;
@@ -899,7 +906,17 @@
       if (d.step) goTo(d.step);
     }
     function clearDraft() { localStorage.removeItem(DRAFT_KEY); }
-    document.addEventListener('visibilitychange', () => { if (document.hidden) saveDraft(); });
+    // Si la PWA reste en mémoire d'un jour à l'autre (ex: vendredi → lundi),
+    // au réveil on jette l'état de la veille et on repart sur un bon vierge à la date du jour.
+    let appDay = new Date().toDateString();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { saveDraft(); return; }
+      if (new Date().toDateString() !== appDay) {
+        appDay = new Date().toDateString();
+        resetForm();
+        loadRdv();
+      }
+    });
     setInterval(saveDraft, 30000);
     loadDraft();
 

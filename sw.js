@@ -1,5 +1,5 @@
 // Service worker — cache l'app pour qu'elle s'ouvre même sans réseau
-const CACHE = "ae-bons-v23";
+const CACHE = "ae-bons-v24";
 const ASSETS = [
   "./",
   "./index.html",

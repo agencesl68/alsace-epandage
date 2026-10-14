@@ -797,6 +797,7 @@
       if (!clientSig && !clientAbsent.checked) { showToast('Signature client manquante (ou coche « client absent »)', 'err'); goTo(3); return; }
       if (moyenEnvoi === 'Email' && !form.email_client.value.trim()) { showToast('Email client manquant', 'err'); goTo(0); return; }
       if (moyenEnvoi === 'SMS' && !form.tel_client.value.trim()) { showToast('Téléphone client manquant', 'err'); goTo(0); return; }
+      if (moyenEnvoi === 'SMS' && !/^(?:(?:\+|00)33|0)[1-9]\d{8}$/.test(form.tel_client.value.replace(/[\s.\-()]/g, ''))) { showToast('Numéro de téléphone invalide (10 chiffres, ex: 06 12 34 56 78)', 'err'); goTo(0); return; }
 
       const _d = new Date();
       const data = {
